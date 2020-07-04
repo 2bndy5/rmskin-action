@@ -16,6 +16,5 @@ Output Arguments
 Example Usage
 =============
 
-.. literalinclude:: ./.github/workflows/main.yml
-    :language: yaml
+.. literalinclude:: .github/workflows/main.yml
     :lines: 12-
