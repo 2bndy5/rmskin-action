@@ -22,7 +22,8 @@ jobs:
         # Checks-out a repository under $GITHUB_WORKSPACE, so your job can access it
         uses: actions/checkout@v2
         with:
-          repository: 2bndy5/Goo-e-Rainmeter-Skin 
+          repository: 2bndy5/Goo-e-Rainmeter-Skin
+          psth: "/"
   
   Build:
     runs-on: ubuntu-latest
