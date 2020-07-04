@@ -1,6 +1,11 @@
 name: rmskin-build
 description: packaging tool for Rainmeter User Content
 
+# for the badge
+branding:
+  icon: 'droplet'  
+  color: 'green'
+
 inputs:
 	version:  'auto'
 		description: 'Version of the Rainmeter rmskin package.'
@@ -15,7 +20,7 @@ inputs:
 		description: 'Base directory of repo being packaged.'
 		required: false
 outputs:
-    arc_name: 
+    arc_name: # path to & name of archive file that was generated
     description: 'path Filename of rmskin file'
 runs:
     using: 'docker'
