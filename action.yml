@@ -7,16 +7,16 @@ branding:
   color: 'green'
 
 inputs:
-	version:  'auto'
+	version: # 'auto'
 		description: 'Version of the Rainmeter rmskin package.'
 		required: false
-	title: 'Unknown'
+	title: # 'Unknown'
 		description: 'Name of the Rainmeter rmskin package.'
 		required: false
-	author: 'Unknown'
+	author: # 'Unknown'
 		description: 'Account Username maintaining the rmskin package.'
 		required: false
-	path: '.'
+	path: # '.'
 		description: 'Base directory of repo being packaged.'
 		required: false
 outputs:
