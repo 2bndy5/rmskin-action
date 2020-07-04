@@ -30,7 +30,7 @@ jobs:
     # Runs a this repo's action
     - name: Run Build action
       id: builder
-      uses: 2bndy5/rmskin-action@-master
+      uses: 2bndy5/rmskin-action/branches/master
 
     # Use the output from the `hello` step
     - name: Print the output path & filename
