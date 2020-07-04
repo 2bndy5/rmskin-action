@@ -19,8 +19,7 @@ jobs:
       
       # print contents of GITHUB_WORKSPACE dir
       - name: verify contents
-        run: |
-          ls
+        run: ls $GITHUB_WORKSPACE
 
       # Runs a this repo's action
       - name: Run Build action
