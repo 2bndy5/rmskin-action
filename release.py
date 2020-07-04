@@ -42,7 +42,7 @@ parser.add_argument(
     default=os.getenv("GITHUB_SHA", "x0x.x0x/")[-8:]
     if os.getenv("GITHUB_REF", "").startswith("refs/")
     else os.getenv("GITHUB_REF", "0.0"),
-    help="Version of release. This should be the github action env var (GITHUB_REF).",
+    help="Version of release. This should be the github action env var (GITHUB_REF or last 8 digits of GITHUB_SHA).",
 )
 parser.add_argument(
     "--author",
@@ -59,7 +59,7 @@ parser.add_argument(
         "GITHUB_REPOSITORY",
         os.getcwd().split(os.sep)[len(os.getcwd().split(os.sep)) - 1],
     ).replace(os.getenv("GITHUB_ACTOR", ";") + os.sep, "", 1),
-    help="title of released package. This should be the github action env vars (GITHUB_REPOSITORY - GITHUB_ACTOR - leading field delimiter).",
+    help="title of released package. This should be just the github repo name.",
 )
 
 HAS_COMPONENTS = {
