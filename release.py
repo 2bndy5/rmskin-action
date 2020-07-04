@@ -55,9 +55,10 @@ parser.add_argument(
     "--title",
     metavar='"STR"',
     type=str,
-    default=os.getenv("GITHUB_REPOSITORY", "").replace(
-        os.getenv("GITHUB_ACTOR", "") + "/", "", 1
-    ),
+    default=os.getenv(
+        "GITHUB_REPOSITORY",
+        os.getcwd().split(os.sep)[len(os.getcwd().split(os.sep)) - 1],
+    ).replace(os.getenv("GITHUB_ACTOR", ";") + os.sep, "", 1),
     help="title of released package. This should be the github action env vars (GITHUB_REPOSITORY - GITHUB_ACTOR - leading field delimiter).",
 )
 
@@ -115,8 +116,8 @@ def main():
             " Layouts, or Plugins!"
         )
     # read options from RMSKIN.ini
-    arc_name = "package_name"
-    version = "auto"  # TODO use *github Action tag*
+    arc_name = args.title
+    version = "auto"
     config = configparser.ConfigParser()
     if HAS_COMPONENTS["RMSKIN.ini"]:
         config.read(root_path + os.sep + "RMSKIN.ini")
@@ -135,7 +136,6 @@ def main():
             else:
                 # use repo name
                 config["rmskin"]["Name"] = args.title
-                arc_name = args.title
             print(f"Using Name ({arc_name}) & Version ({version})")
             load_t = config["rmskin"]["LoadType"]  # ex: "Skin"
             load = config["rmskin"]["Load"]  # ex: "Skin_Root\\skin.ini"
@@ -187,21 +187,13 @@ def main():
                                     # archive this 32-bit plugin
                                     arc_file.write(
                                         dirpath + os.sep + n,
-                                        arcname=key
-                                        + os.sep
-                                        + "32bit"
-                                        + os.sep
-                                        + n,
+                                        arcname=key + os.sep + "32bit" + os.sep + n,
                                     )
                                 else:
                                     # archive this 64-bit plugin
                                     arc_file.write(
                                         dirpath + os.sep + n,
-                                        arcname=key
-                                        + os.sep
-                                        + "64bit"
-                                        + os.sep
-                                        + n,
+                                        arcname=key + os.sep + "64bit" + os.sep + n,
                                     )
                                 # pylint: enable=no-member
                                 del bitness
@@ -231,10 +223,12 @@ def main():
         print(f"appending footer: {custom_footer}")
         arc_file.write(custom_footer)
 
-    print('Archive successfully prepared.')
-    print("::set-output name=arc_name::{}".format(
-        root_path + os.sep + arc_name + "_" + version + ".rmskin"
-    ))
+    print("Archive successfully prepared.")
+    print(
+        "::set-output name=arc_name::{}".format(
+            root_path + os.sep + arc_name + "_" + version + ".rmskin"
+        )
+    )
 
 
 if __name__ == "__main__":
