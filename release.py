@@ -65,7 +65,7 @@ HAS_COMPONENTS = {
     "RMSKIN.ini": False,
     "Skins": 0,
     "Layouts": 0,
-    "Plugins": 0,
+    "Plugins": False,
     "@Vault": 0,
 }
 
@@ -85,12 +85,12 @@ def main():
             HAS_COMPONENTS["Skins"] = len(dirnames)
             print("Found {} possible Skin(s)".format(HAS_COMPONENTS["Skins"]))
         elif dirpath.endswith("@Vault"):
-            HAS_COMPONENTS["@Vault"] = len(dirnames) + len(filenames)
+            HAS_COMPONENTS["@Vault"] = len(filenames) + len(dirnames)
             print("Found {} possible @Vault item(s)".format(HAS_COMPONENTS["@Vault"]))
         elif dirpath.endswith("Plugins"):
             if len(dirnames) > 0:
-                HAS_COMPONENTS["Plugins"] = len(filenames) / len(dirnames)
-            print("Found {} possible Plugin(s)".format(HAS_COMPONENTS["Plugins"]))
+                HAS_COMPONENTS["Plugins"] = True
+            print("Found Plugins folder")
         elif dirpath.endswith("Layouts"):
             HAS_COMPONENTS["Layouts"] = len(filenames) + len(dirnames)
             print("Found {} possible Layout(s)".format(HAS_COMPONENTS["Layouts"]))
@@ -98,13 +98,11 @@ def main():
             HAS_COMPONENTS["RMSKIN.ini"] = True
             print("Found RMSKIN.ini file")
             for d in dirnames:  # exclude hidden directories
-                print(f"looking at {d}")
                 if d.startswith("."):
                     del d
         # set depth of search to shallow (2 folders deep)
         if len(dirpath) > 0:
             dirnames.clear()
-    print("using working dir: {}".format(os.getcwd()))
     # quite if bad dir struct
     if not (
         HAS_COMPONENTS["Layouts"]

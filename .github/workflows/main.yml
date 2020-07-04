@@ -17,9 +17,9 @@ jobs:
       - name: Checkout this Repo
         uses: actions/checkout@v2
       
-      # print contents of GITHUB_WORKSPACE dir
-      - name: verify contents
-        run: ls $GITHUB_WORKSPACE
+      # # print contents of GITHUB_WORKSPACE dir
+      # - name: verify contents
+      #   run: ls $GITHUB_WORKSPACE
 
       # Runs a this repo's action
       - name: Run Build action
