@@ -88,7 +88,8 @@ def main():
             HAS_COMPONENTS["@Vault"] = len(dirnames) + len(filenames)
             print("Found {} possible @Vault item(s)".format(HAS_COMPONENTS["@Vault"]))
         elif dirpath.endswith("Plugins"):
-            HAS_COMPONENTS["Plugins"] = len(dirnames)
+            if len(dirnames) > 0:
+                HAS_COMPONENTS["Plugins"] = len(filenames) / len(dirnames)
             print("Found {} possible Plugin(s)".format(HAS_COMPONENTS["Plugins"]))
         elif dirpath.endswith("Layouts"):
             HAS_COMPONENTS["Layouts"] = len(filenames) + len(dirnames)
@@ -178,8 +179,6 @@ def main():
                         for n in filenames:
                             if n.lower().endswith(".dll"):
                                 # let plugin_name be 2nd last folder name in dll's path
-                                plugin_name = dirpath.split(os.sep)
-                                plugin_name = plugin_name[len(plugin_name) - 2]
                                 bitness = pefile.PE(
                                     dirpath + os.sep + n,
                                     fast_load=True,  # just get headers
@@ -192,8 +191,6 @@ def main():
                                         dirpath + os.sep + n,
                                         arcname=key
                                         + os.sep
-                                        + plugin_name
-                                        + os.sep
                                         + "32bit"
                                         + os.sep
                                         + n,
@@ -203,8 +200,6 @@ def main():
                                     arc_file.write(
                                         dirpath + os.sep + n,
                                         arcname=key
-                                        + os.sep
-                                        + plugin_name
                                         + os.sep
                                         + "64bit"
                                         + os.sep
