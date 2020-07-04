@@ -7,18 +7,18 @@ branding:
   color: 'green'
 
 inputs:
-	version: # 'auto'
-		description: 'Version of the Rainmeter rmskin package.'
-		required: false
-	title: # 'Unknown'
-		description: 'Name of the Rainmeter rmskin package.'
-		required: false
-	author: # 'Unknown'
-		description: 'Account Username maintaining the rmskin package.'
-		required: false
-	path: # '.'
-		description: 'Base directory of repo being packaged.'
-		required: false
+  version: # 'auto'
+    description: 'Version of the Rainmeter rmskin package.'
+    required: false
+  title: # 'Unknown'
+    description: 'Name of the Rainmeter rmskin package.'
+    required: false
+  author: # 'Unknown'
+    description: 'Account Username maintaining the rmskin package.'
+    required: false
+  path: # '.'
+    description: 'Base directory of repo being packaged.'
+    required: false
 outputs:
     arc_name: # path to & name of archive file that was generated
     description: 'path Filename of rmskin file'
@@ -26,7 +26,7 @@ runs:
     using: 'docker'
     image: 'Dockerfile'
     args:
-			- ${{ inputs.version }}
-			- ${{ inputs.title }}
-			- ${{ inputs.author }}
-			- ${{ inputs.path }}
+      - ${{ inputs.version }}
+      - ${{ inputs.title }}
+      - ${{ inputs.author }}
+      - ${{ inputs.path }}
