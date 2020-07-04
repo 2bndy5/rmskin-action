@@ -29,5 +29,5 @@ jobs:
       uses: 2bndy5/rmskin-action
 
     # Use the output from the `hello` step
-    - name: Get the output time
-      run: echo "The time was ${{ steps.builder.outputs.arc_name }}"
+    - name: name: Print the output path & filename
+      run: echo "The output file was ${{ steps.builder.outputs.arc_name }}"
