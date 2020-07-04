@@ -103,7 +103,7 @@ def main():
         # set depth of search to shallow (2 folders deep)
         if len(dirpath) > 0:
             dirnames.clear()
-
+    print("using working dir: {}".format(os.getcwd()))
     # quite if bad dir struct
     if not (
         HAS_COMPONENTS["Layouts"]
