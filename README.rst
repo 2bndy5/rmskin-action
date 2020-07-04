@@ -1,3 +1,8 @@
+
+.. image:: https://github.com/2bndy5/rmskin-action/workflows/CI/badge.svg
+    :target: https://github.com/2bndy5/rmskin-action/actions
+
+
 rmskin-action
 =============
 
