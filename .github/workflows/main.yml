@@ -19,7 +19,7 @@ jobs:
       
       # print contents of GITHUB_WORKSPACE dir
       - name: verify contents
-        runs: |
+        run: |
           ls
 
       # Runs a this repo's action
