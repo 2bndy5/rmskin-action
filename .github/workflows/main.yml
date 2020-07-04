@@ -9,31 +9,19 @@ on:
     branches: [ master ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
-jobs:
-  Setup:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup Python3
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
-
-      - name: checkout a test repo of a rainmeter skin
-        # Checks-out a repository under $GITHUB_WORKSPACE, so your job can access it
-        uses: actions/checkout@v2
-        with:
-          repository: 2bndy5/Goo-e-Rainmeter-Skin
-          path: "/"
-  
+jobs:  
   Build:
     runs-on: ubuntu-latest
-    needs: 'Setup'
     steps:
+      # Checkout code
+      - name: Checkout this Repo
+        uses: actions/checkout@v2
+      
       # Runs a this repo's action
       - name: Run Build action
         id: builder
         uses: 2bndy5/rmskin-action@master
 
-      # Use the output from the `hello` step
+      # Use the output from the `builder` step
       - name: Print the output path & filename
         run: echo "The output file was ${{ steps.builder.outputs.arc_name }}"
