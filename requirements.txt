@@ -1,0 +1,2 @@
+# for detirmining if a .dll file is for 64-bit or 32-bit
+pefile
