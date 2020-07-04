@@ -29,5 +29,5 @@ jobs:
       uses: 2bndy5/rmskin-action
 
     # Use the output from the `hello` step
-    - name: name: Print the output path & filename
+    - name: Print the output path & filename
       run: echo "The output file was ${{ steps.builder.outputs.arc_name }}"
