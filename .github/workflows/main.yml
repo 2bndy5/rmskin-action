@@ -19,11 +19,10 @@ jobs:
           python-version: '3.8'
 
       - name: checkout a test repo of a rainmeter skin
-      # Checks-out a repository under $GITHUB_WORKSPACE, so your job can access it
+        # Checks-out a repository under $GITHUB_WORKSPACE, so your job can access it
         uses: actions/checkout@v2
         with:
           repository: 2bndy5/Goo-e-Rainmeter-Skin 
-          path: '.'
   
   Build:
     runs-on: ubuntu-latest
