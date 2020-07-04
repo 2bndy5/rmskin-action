@@ -97,6 +97,7 @@ def main():
             HAS_COMPONENTS["RMSKIN.ini"] = True
             print("Found RMSKIN.ini file")
             for d in dirnames:  # exclude hidden directories
+                print(f"looking at {d}")
                 if d.startswith("."):
                     del d
         # set depth of search to shallow (2 folders deep)

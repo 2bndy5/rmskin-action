@@ -1,5 +1,4 @@
 #!/bin/sh -l
 
-echo ls
 pip install -r /reqs.txt
-python /rmskin_builder.py --path "${{  GITHUB_WORKSPACE  }}"
+python /rmskin_builder.py
