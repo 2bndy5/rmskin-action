@@ -26,12 +26,12 @@ jobs:
   
   Build:
     runs-on: ubuntu-latest
+    needs: 'Setup'
     steps:
       # Runs a this repo's action
       - name: Run Build action
         id: builder
         uses: 2bndy5/rmskin-action@master
-        needs: 'Setup'
 
       # Use the output from the `hello` step
       - name: Print the output path & filename
