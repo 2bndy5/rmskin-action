@@ -40,8 +40,8 @@ parser.add_argument(
     metavar='"STR"',
     type=str,
     default=os.getenv("GITHUB_SHA", "x0x.x0x/")[-8:]
-    if os.getenv("GITHUB_REF", "").startswith("refs/")
-    else os.getenv("GITHUB_REF", "0.0"),
+    if not os.getenv("GITHUB_REF", "").startswith("refs/tags/")
+    else os.getenv("GITHUB_REF", "refs/tags/0.0").replace("refs/tags/", ""),
     help="Version of release. This should be the github action env var (GITHUB_REF or last 8 digits of GITHUB_SHA).",
 )
 parser.add_argument(
@@ -224,11 +224,7 @@ def main():
         arc_file.write(custom_footer)
 
     print("Archive successfully prepared.")
-    print(
-        "::set-output name=arc_name::{}".format(
-           arc_name + "_" + version + ".rmskin"
-        )
-    )
+    print("::set-output name=arc_name::{}".format(arc_name + "_" + version + ".rmskin"))
 
 
 if __name__ == "__main__":

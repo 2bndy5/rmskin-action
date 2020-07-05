@@ -21,7 +21,7 @@ branding:
 #     required: false
 outputs:
     arc_name: # path to & name of archive file that was generated
-    description: 'path Filename of rmskin file'
+    description: 'name of rmskin file'
 runs:
     using: 'docker'
     image: 'Dockerfile'
