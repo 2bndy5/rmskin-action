@@ -67,7 +67,7 @@ Example Usage
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             with:
-              upload_url: ${{ steps.create_release.outputs.upload_url || steps.get_release.outputs.upload_url }}
+              upload_url: ${{ steps.get_release.outputs.upload_url }}
               asset_path: ./${{ steps.builder.outputs.arc_name }}
               asset_name: ${{ steps.builder.outputs.arc_name }}
               asset_content_type: application/zip
