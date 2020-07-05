@@ -226,7 +226,7 @@ def main():
     print("Archive successfully prepared.")
     print(
         "::set-output name=arc_name::{}".format(
-            root_path + os.sep + arc_name + "_" + version + ".rmskin"
+           arc_name + "_" + version + ".rmskin"
         )
     )
 
