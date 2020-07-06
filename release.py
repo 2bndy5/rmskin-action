@@ -86,7 +86,8 @@ def main():
         args.dir_out = args.dir_out[:-1]
 
     print(f"using {root_path}")
-    print(f"dirs = {os.listdir(root_path)}")
+    for d in os.listdir(root_path):
+        print(d)
 
     # capture the directory tree
     for dirpath, dirnames, filenames in os.walk(root_path):
@@ -112,14 +113,12 @@ def main():
                 HAS_COMPONENTS["RMSKIN.bmp"] = True
                 print("Found header image")
             for d in dirnames:  # exclude hidden directories
-                print(f"looking at '{d}'")                    
                 if d.startswith("."):
                     del d
         # set depth of search to shallow (2 folders deep)
         if len(dirpath) > 0:
-            for d in dirnames:
-                print(f"looking deeper at '{d}'")
             dirnames.clear()
+    
     # quite if bad dir struct
     if not (
         HAS_COMPONENTS["Layouts"]
