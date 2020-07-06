@@ -86,7 +86,7 @@ def main():
         args.dir_out = args.dir_out[:-1]
 
     print(f"using {root_path}")
-    for d in os.listdir(root_path):
+    for d in os.scandir(path=root_path):
         print(d)
 
     # capture the directory tree
