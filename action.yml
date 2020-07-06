@@ -13,7 +13,7 @@ inputs:
   title: # 'Unknown'
     description: "Name of the Rainmeter rmskin package. Defaults name of repository."
     required: false
-    default: ${{ (echo github.repository | cut -d'/' -f 2) }}
+    default: ${{ (github.repository | cut -d'/' -f 2) }}
   author: # 'Unknown'
     description: "Account Username maintaining the rmskin package. Defaults to Username that triggered the commit."
     required: false
