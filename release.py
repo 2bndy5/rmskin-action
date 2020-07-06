@@ -21,6 +21,7 @@ import configparser
 import zipfile
 import struct
 import pefile
+from PIL import Image
 
 parser = argparse.ArgumentParser(
     description="""
@@ -39,7 +40,7 @@ parser.add_argument(
     "--version",
     metavar='"STR"',
     type=str,
-    default=os.getenv("GITHUB_SHA", "x0x.x0x/")[-8:]
+    default=os.getenv("GITHUB_SHA", "x0x.x0xy")[-8:]
     if not os.getenv("GITHUB_REF", "").startswith("refs/tags/")
     else os.getenv("GITHUB_REF", "refs/tags/0.0").replace("refs/tags/", ""),
     help="Version of release. This should be the github action env var (GITHUB_REF or last 8 digits of GITHUB_SHA).",
@@ -61,6 +62,13 @@ parser.add_argument(
     ).replace(os.getenv("GITHUB_ACTOR", ";") + os.sep, "", 1),
     help="title of released package. This should be just the github repo name.",
 )
+parser.add_argument(
+    "--dir_out",
+    metavar='"STR"',
+    type=str,
+    default=None,
+    help="output path to save released package file. This optional & only used when specified.",
+)
 
 HAS_COMPONENTS = {
     "RMSKIN.ini": False,
@@ -68,6 +76,7 @@ HAS_COMPONENTS = {
     "Layouts": 0,
     "Plugins": False,
     "@Vault": 0,
+    "RMSKIN.bmp": False
 }
 
 
@@ -78,6 +87,8 @@ def main():
     # truncate trailing path seperator
     if root_path.endswith(os.sep):
         root_path = root_path[:-1]
+    if args.dir_out is not None and args.dir_out.endswith(os.sep):
+        args.dir_out = args.dir_out[:-1]
 
     # capture the directory tree
     for dirpath, dirnames, filenames in os.walk(root_path):
@@ -95,9 +106,13 @@ def main():
         elif dirpath.endswith("Layouts"):
             HAS_COMPONENTS["Layouts"] = len(filenames) + len(dirnames)
             print("Found {} possible Layout(s)".format(HAS_COMPONENTS["Layouts"]))
-        elif len(dirpath) == 0 and "RMSKIN.ini" in filenames:
-            HAS_COMPONENTS["RMSKIN.ini"] = True
-            print("Found RMSKIN.ini file")
+        elif len(dirpath) == 0:
+            if "RMSKIN.ini" in filenames:
+                HAS_COMPONENTS["RMSKIN.ini"] = True
+                print("Found RMSKIN.ini file")
+            elif "RMSKIN.bmp" in filenames:
+                HAS_COMPONENTS["RMSKIN.bmp"] = True
+                print("Found header image")
             for d in dirnames:  # exclude hidden directories
                 if d.startswith("."):
                     del d
@@ -156,16 +171,30 @@ def main():
         raise RuntimeError(
             f"repository structure for {root_path} is malformed. RMSKIN.ini file not found!"
         )
+    
+    # make sure header image is correct size (400x60)
+    if HAS_COMPONENTS["RMSKIN.bmp"]:
+        with Image.open(root_path + os.sep + "RMSKIN.bmp") as img:
+            if img.width != 400 and  img.height != 60:
+                print("WARNING: resizing header image to 400x60")
+                img = img.resize((400, 60))
+            if img.mode != 'RGB':
+                print("Correcting color space in header image.")
+                img = img.convert(mode='RGB')
+            img.save(root_path + os.sep + "RMSKIN.bmp")
 
     # Now get to creating an archive
     compressed_size = 0
     with zipfile.ZipFile(
-        root_path + os.sep + arc_name + "_" + version + ".rmskin",
+        (root_path if args.dir_out is None else args.dir_out)
+        + os.sep + arc_name + "_" + version + ".rmskin",
         "w",
         compression=zipfile.ZIP_DEFLATED,
         compresslevel=9,
     ) as arc_file:
-        # write RMSKIN.ini first
+        # write RMSKIN.ini and header image (RMSKIN.bmp) first
+        if HAS_COMPONENTS["RMSKIN.bmp"]:
+            arc_file.write(root_path + os.sep + "RMSKIN.bmp", arcname="RMSKIN.bmp")
         arc_file.write(root_path + os.sep + "RMSKIN.ini", arcname="RMSKIN.ini")
         for key in HAS_COMPONENTS:
             if key.endswith(".ini"):
