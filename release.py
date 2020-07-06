@@ -89,20 +89,22 @@ def main():
 
     # capture the directory tree
     for dirpath, dirnames, filenames in os.walk(root_path):
+        print("files =", filenames)
+        print("folders =", dirnames)
         dirpath = dirpath.replace(root_path, "")
         if dirpath.endswith("Skins"):
             HAS_COMPONENTS["Skins"] = len(dirnames)
-            print("Found {} possible Skin(s)".format(HAS_COMPONENTS["Skins"]))
+            print(f"Found {HAS_COMPONENTS['Skins']} possible Skin(s)")
         elif dirpath.endswith("@Vault"):
             HAS_COMPONENTS["@Vault"] = len(filenames) + len(dirnames)
-            print("Found {} possible @Vault item(s)".format(HAS_COMPONENTS["@Vault"]))
+            print(f"Found {HAS_COMPONENTS['@Vault']} possible @Vault item(s)")
         elif dirpath.endswith("Plugins"):
             if len(dirnames) > 0:
                 HAS_COMPONENTS["Plugins"] = True
             print("Found Plugins folder")
         elif dirpath.endswith("Layouts"):
             HAS_COMPONENTS["Layouts"] = len(filenames) + len(dirnames)
-            print("Found {} possible Layout(s)".format(HAS_COMPONENTS["Layouts"]))
+            print(f"Found {HAS_COMPONENTS['Layouts']} possible Layout(s)")
         elif len(dirpath) == 0:
             if "RMSKIN.ini" in filenames:
                 HAS_COMPONENTS["RMSKIN.ini"] = True
