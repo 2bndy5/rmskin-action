@@ -4,21 +4,28 @@ description: packaging tool for Rainmeter User Content
 # for the badge
 branding:
   icon: 'droplet'  
-  color: 'green'
 
-# inputs:
-#   version: # 'auto'
-#     description: 'Version of the Rainmeter rmskin package.'
-#     required: false
-#   title: # 'Unknown'
-#     description: 'Name of the Rainmeter rmskin package.'
-#     required: false
-#   author: # 'Unknown'
-#     description: 'Account Username maintaining the rmskin package.'
-#     required: false
-#   path: # '.'
-#     description: 'Base directory of repo being packaged.'
-#     required: false
+inputs:
+  version: # 'auto'
+    description: 'Version of the Rainmeter rmskin package. defaults to last 8 digits of SHA from commit or reference tags.'
+    required: false
+    default: 'auto'
+  title: # 'Unknown'
+    description: 'Name of the Rainmeter rmskin package. Defaults name of repository.'
+    required: false
+  author: # 'Unknown'
+    description: 'Account Username maintaining the rmskin package. Defaults to Username that triggered the commit.'
+    required: false
+    default: ${{ GITHUB_ACTOR }}
+  path: # '.'
+    description: 'Base directory of repo being packaged. Defaults to workflow's workspace path'
+    required: false
+    default: ${{ GITHUB_WORKSPACE }}
+  dir_out: # '.'
+    description: 'Path to save generated rmskin package. Defaults to workflow's workspace path'
+    required: false
+    default: ${{ GITHUB_WORKSPACE }}
+
 outputs:
     arc_name: # path to & name of archive file that was generated
     description: 'name of rmskin file'
@@ -26,7 +33,8 @@ runs:
     using: 'docker'
     image: 'Dockerfile'
     args:
-      - ${{ inputs.version }}
-      - ${{ inputs.title }}
-      - ${{ inputs.author }}
       - ${{ inputs.path }}
+      - ${{ inputs.version }}
+      - ${{ inputs.author }}
+      - ${{ inputs.title }}
+      - ${{ inputs.dir_out }}
