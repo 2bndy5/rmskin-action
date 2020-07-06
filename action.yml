@@ -21,7 +21,7 @@ inputs:
   path: # '.'
     description: "Base directory of repo being packaged. Defaults to workflow's workspace path"
     required: false
-    default: ${{ GITHUB_WORKSPACE }}
+    default: ${{ $GITHUB_WORKSPACE }}
   dir_out: # '.'
     description: "Path to save generated rmskin package. Defaults to workflow's workspace path"
     required: false
