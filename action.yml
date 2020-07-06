@@ -30,8 +30,8 @@ runs:
     using: 'docker'
     image: 'Dockerfile'
     args:
-      - ${{ inputs.path || github.workspace }}
+      - ${{ [ inputs.path ] && echo inputs.path || echo GITHUB_WORKSPACE }}
       - ${{ inputs.version }}
-      - ${{ inputs.author || github.actor }}
-      - ${{ inputs.title || $(echo ${{ github.repository }} | cut -d'/' -f 2) }}
-      - ${{ inputs.dir_out || github.workspace }}
+      - ${{ [ inputs.author ] && echo inputs.author || echo GITHUB_ACTOR }}
+      - ${{ [ inputs.title ] && echo inputs.title || echo $(echo GITHUB_REPOSITORY | cut -d'/' -f 2) }}
+      - ${{ [ inputs.dir_out ] && echo inputs.dir_out || echo GITHUB_WORKSPACE }}
