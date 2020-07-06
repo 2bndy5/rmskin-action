@@ -20,7 +20,9 @@ jobs:
       
       # print contents of GITHUB_WORKSPACE dir
       - name: verify contents
-        run: ls ${{ steps.builder.inputs.path }}
+        run: |
+          echo ${{ steps.builder.inputs.path }}
+          ls ${{ steps.builder.inputs.path }}
         
       # Runs a this repo's action
       - name: Run Build action
