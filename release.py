@@ -40,26 +40,21 @@ parser.add_argument(
     "--version",
     metavar='"STR"',
     type=str,
-    default=os.getenv("GITHUB_SHA", "x0x.x0xy")[-8:]
-    if not os.getenv("GITHUB_REF", "").startswith("refs/tags/")
-    else os.getenv("GITHUB_REF", "refs/tags/0.0").replace("refs/tags/", ""),
-    help="Version of release. This should be the github action env var (GITHUB_REF or last 8 digits of GITHUB_SHA).",
+    default='auto',
+    help="Version of release. This should be the github action env var (GITHUB_REF - 'refs/tags' or last 8 digits of GITHUB_SHA).",
 )
 parser.add_argument(
     "--author",
     metavar='"STR"',
     type=str,
-    default=os.getenv("GITHUB_ACTOR", "Unknown"),
+    default="Unknown",
     help="Author of release. This should be the github action env var (GITHUB_ACTOR).",
 )
 parser.add_argument(
     "--title",
     metavar='"STR"',
     type=str,
-    default=os.getenv(
-        "GITHUB_REPOSITORY",
-        os.getcwd().split(os.sep)[len(os.getcwd().split(os.sep)) - 1],
-    ).replace(os.getenv("GITHUB_ACTOR", ";") + os.sep, "", 1),
+    default=os.getcwd().split(os.sep)[len(os.getcwd().split(os.sep)) - 1],
     help="Title of released package. This should be just the github repo name.",
 )
 parser.add_argument(
@@ -89,6 +84,8 @@ def main():
         root_path = root_path[:-1]
     if args.dir_out is not None and args.dir_out.endswith(os.sep):
         args.dir_out = args.dir_out[:-1]
+
+    print(f"using path: {root_path}")
 
     # capture the directory tree
     for dirpath, dirnames, filenames in os.walk(root_path):
@@ -122,9 +119,9 @@ def main():
     # quite if bad dir struct
     if not (
         HAS_COMPONENTS["Layouts"]
-        or HAS_COMPONENTS["Skins"]
-        or HAS_COMPONENTS["Plugins"]
-        or HAS_COMPONENTS["@Vault"]
+        and HAS_COMPONENTS["Skins"]
+        and HAS_COMPONENTS["Plugins"]
+        and HAS_COMPONENTS["@Vault"]
     ):
         raise RuntimeError(
             f"repository structure for {root_path} is malformed. Found no Skins,"
@@ -140,8 +137,11 @@ def main():
             if "Version" in config["rmskin"]:
                 version = config["rmskin"]["Version"]
             if version.endswith("auto"):
-                config["rmskin"]["Version"] = args.version
-                version = args.version
+                if not os.getenv("GITHUB_REF", "").startswith("refs/tags/"):
+                    version = os.getenv("GITHUB_SHA", "x0x.x0xy")[-8:]
+                else:
+                    version = os.getenv("GITHUB_REF", "refs/tags/0.0").replace("refs/tags/", "")
+                config["rmskin"]["Version"] = version
             if not "Author" in config["rmskin"]:
                 # maybe someday aggregated list authors from discovered skins' metadata->Author fields
                 config["rmskin"]["Author"] = args.author
