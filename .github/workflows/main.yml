@@ -16,12 +16,11 @@ jobs:
       # Checkout code
       - name: Checkout this Repo
         uses: actions/checkout@v2
-      
-      
+            
       # print contents of GITHUB_WORKSPACE dir
       - name: verify contents
         run: |
-          ls "${{ github.workspace }}"
+          ls "${{ steps.builder.inputs.path }}"
         
       # Runs a this repo's action
       - name: Run Build action
@@ -29,11 +28,6 @@ jobs:
         uses: 2bndy5/rmskin-action@master
         with:
           path: ${{ github.workspace }}
-        
-      # print contents of GITHUB_WORKSPACE dir
-      - name: verify contents
-        if: ${{ failure() }}
-        run: ls ${{ steps.builder.inputs.path }}
         
       # Use the output from the `builder` step
       - name: Print the output path & filename

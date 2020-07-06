@@ -85,12 +85,11 @@ def main():
     if args.dir_out is not None and args.dir_out.endswith(os.sep):
         args.dir_out = args.dir_out[:-1]
 
-    print(f"using path: {root_path}")
+    print(f"using {root_path}")
+    print(f"dirs = {os.listdir(root_path)}")
 
     # capture the directory tree
     for dirpath, dirnames, filenames in os.walk(root_path):
-        print("files =", filenames)
-        print("folders =", dirnames)
         dirpath = dirpath.replace(root_path, "")
         if dirpath.endswith("Skins"):
             HAS_COMPONENTS["Skins"] = len(dirnames)
@@ -124,9 +123,9 @@ def main():
     # quite if bad dir struct
     if not (
         HAS_COMPONENTS["Layouts"]
-        and HAS_COMPONENTS["Skins"]
-        and HAS_COMPONENTS["Plugins"]
-        and HAS_COMPONENTS["@Vault"]
+        or HAS_COMPONENTS["Skins"]
+        or HAS_COMPONENTS["Plugins"]
+        or HAS_COMPONENTS["@Vault"]
     ):
         raise RuntimeError(
             f"repository structure for {root_path} is malformed. Found no Skins,"
