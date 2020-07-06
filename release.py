@@ -50,7 +50,7 @@ parser.add_argument(
     metavar='"STR"',
     type=str,
     default=os.getenv("GITHUB_ACTOR", "Unknown"),
-    help="author of release. This should be the github action env var (GITHUB_ACTOR).",
+    help="Author of release. This should be the github action env var (GITHUB_ACTOR).",
 )
 parser.add_argument(
     "--title",
@@ -60,14 +60,14 @@ parser.add_argument(
         "GITHUB_REPOSITORY",
         os.getcwd().split(os.sep)[len(os.getcwd().split(os.sep)) - 1],
     ).replace(os.getenv("GITHUB_ACTOR", ";") + os.sep, "", 1),
-    help="title of released package. This should be just the github repo name.",
+    help="Title of released package. This should be just the github repo name.",
 )
 parser.add_argument(
     "--dir_out",
     metavar='"STR"',
     type=str,
     default=None,
-    help="output path to save released package file. This optional & only used when specified.",
+    help="Output path to save released package file. This optional & only used when specified.",
 )
 
 HAS_COMPONENTS = {
@@ -183,7 +183,7 @@ def main():
                 img = img.convert(mode='RGB')
             img.save(root_path + os.sep + "RMSKIN.bmp")
 
-    # Now get to creating an archive
+    # Now creating the archive
     compressed_size = 0
     with zipfile.ZipFile(
         (root_path if args.dir_out is None else args.dir_out)

@@ -7,7 +7,7 @@ branding:
 
 inputs:
   version: # 'auto'
-    description: 'Version of the Rainmeter rmskin package. defaults to last 8 digits of SHA from commit or reference tags.'
+    description: 'Version of the Rainmeter rmskin package. Defaults to last 8 digits of SHA from commit or reference tags.'
     required: false
     default: 'auto'
   title: # 'Unknown'
@@ -16,15 +16,12 @@ inputs:
   author: # 'Unknown'
     description: 'Account Username maintaining the rmskin package. Defaults to Username that triggered the commit.'
     required: false
-    default: ${{ GITHUB_ACTOR }}
   path: # '.'
     description: 'Base directory of repo being packaged. Defaults to workflow's workspace path'
     required: false
-    default: ${{ GITHUB_WORKSPACE }}
   dir_out: # '.'
     description: 'Path to save generated rmskin package. Defaults to workflow's workspace path'
     required: false
-    default: ${{ GITHUB_WORKSPACE }}
 
 outputs:
     arc_name: # path to & name of archive file that was generated
@@ -33,8 +30,8 @@ runs:
     using: 'docker'
     image: 'Dockerfile'
     args:
-      - ${{ inputs.path }}
+      - ${{ inputs.path || github.workspace }}
       - ${{ inputs.version }}
-      - ${{ inputs.author }}
-      - ${{ inputs.title }}
-      - ${{ inputs.dir_out }}
+      - ${{ inputs.author || github.actor }}
+      - ${{ inputs.title || $(echo ${{ github.repository }} | cut -d'/' -f 2) }}
+      - ${{ inputs.dir_out || github.workspace }}
