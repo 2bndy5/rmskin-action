@@ -33,7 +33,7 @@ parser.add_argument(
     "--path",
     metavar='"STR"',
     type=str,
-    default=os.getcwd(),
+    default=os.getenv("GITHUB_WORKSPACE", os.getcwd()),
     help="Base path of a git repository. Defaults to working directory.",
 )
 parser.add_argument(
