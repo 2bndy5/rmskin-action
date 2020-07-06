@@ -111,10 +111,13 @@ def main():
                 HAS_COMPONENTS["RMSKIN.bmp"] = True
                 print("Found header image")
             for d in dirnames:  # exclude hidden directories
+                print(f"looking at '{d}'")                    
                 if d.startswith("."):
                     del d
         # set depth of search to shallow (2 folders deep)
         if len(dirpath) > 0:
+            for d in dirnames:
+                print(f"looking deeper at '{d}'")
             dirnames.clear()
     # quite if bad dir struct
     if not (
