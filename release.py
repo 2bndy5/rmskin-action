@@ -110,7 +110,7 @@ def main():
             if "RMSKIN.ini" in filenames:
                 HAS_COMPONENTS["RMSKIN.ini"] = True
                 print("Found RMSKIN.ini file")
-            elif "RMSKIN.bmp" in filenames:
+            if "RMSKIN.bmp" in filenames:
                 HAS_COMPONENTS["RMSKIN.bmp"] = True
                 print("Found header image")
             for d in dirnames:  # exclude hidden directories
@@ -172,7 +172,7 @@ def main():
             f"repository structure for {root_path} is malformed. RMSKIN.ini file not found!"
         )
     
-    # make sure header image is correct size (400x60)
+    # make sure header image is correct size (400x60) & correct color space
     if HAS_COMPONENTS["RMSKIN.bmp"]:
         with Image.open(root_path + os.sep + "RMSKIN.bmp") as img:
             if img.width != 400 and  img.height != 60:
