@@ -27,6 +27,8 @@ jobs:
       - name: Run Build action
         id: builder
         uses: 2bndy5/rmskin-action@master
+        with:
+          path: ${{ github.workspace }}
         
       # print contents of GITHUB_WORKSPACE dir
       - name: verify contents
