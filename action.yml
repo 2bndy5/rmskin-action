@@ -16,12 +16,14 @@ inputs:
   author: # 'Unknown'
     description: "Account Username maintaining the rmskin package. Defaults to Username that triggered the commit."
     required: false
+    default:  ${{ github.actor }}
   path: # '.'
     description: "Base directory of repo being packaged. Defaults to workflow's workspace path"
     required: false
   dir_out: # '.'
     description: "Path to save generated rmskin package. Defaults to workflow's workspace path"
     required: false
+    default: ${{ github.workspace }}
 
 outputs:
     arc_name: # path to & name of archive file that was generated
@@ -30,8 +32,8 @@ runs:
     using: 'docker'
     image: 'Dockerfile'
     args:
-      - ${{ [ inputs.path ] && echo inputs.path || echo GITHUB_WORKSPACE }}
+      - ${{ inputs.path = [ inputs.path ] && echo inputs.path || echo github.workspace }}
       - ${{ inputs.version }}
-      - ${{ [ inputs.author ] && echo inputs.author || echo GITHUB_ACTOR }}
-      - ${{ [ inputs.title ] && echo inputs.title || echo $(echo GITHUB_REPOSITORY | cut -d'/' -f 2) }}
-      - ${{ [ inputs.dir_out ] && echo inputs.dir_out || echo GITHUB_WORKSPACE }}
+      - ${{ inputs.author = [ inputs.author ] && echo inputs.author || echo github.actor }}
+      - ${{ inputs.title = [ inputs.title ] && echo inputs.title || echo $(echo github.repository | cut -d'/' -f 2) }}
+      - ${{ inputs.dir_out = [ inputs.dir_out ] && echo inputs.dir_out || echo github.workspace }}
