@@ -13,21 +13,22 @@ Input Arguments
 
     .. csv-table::
         :header: "Argument", "Description", "Required"
-        :widths: 7, 15, 3
+        :widths: 5, 15, 3
 
-        "version", "Version of the Rainmeter rmskin package. defaults to last 8 digits of SHA from commit or ref/tags", "no"
-        "title", "Name of the Rainmeter rmskin package. Defaults name of repository", "no"
-        "author", "Account Username maintaining the rmskin package. Defaults to Username that pushed the commit.", "no"
+        "version", "Version of the Rainmeter rmskin package. Defaults to last 8 digits of SHA from commit or ref/tags", "no"
+        "title", "Name of the Rainmeter rmskin package. Defaults to name of repository", "no"
+        "author", "Account Username maintaining the rmskin package. Defaults to Username that owns the repository.", "no"
         "path", "Base directory of repo being packaged. Defaults to workflow's workspace path", "no"
         "dir_out", "Path to save generated rmskin package. Defaults to workflow's workspace path", "no"
 
     .. note:: 
-        You can also use your repository's ``RMSKIN.ini`` file to override any default inputs.
+        You can use your repository's ``RMSKIN.ini`` file to override any above inputs except ``dir_out`` & ``path`` inputs.
 
 Output Arguments
 ================
 
-    * ``arc_name`` : The Path to & name of the generated rmskin file.
+    * ``arc_name`` : The name of the generated rmskin file saved in the
+      path specified by ``dir_out`` input argument.
 
 Example Usage
 =============

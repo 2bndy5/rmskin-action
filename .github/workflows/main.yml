@@ -13,13 +13,17 @@ jobs:
   Build:
     runs-on: ubuntu-latest
     steps:
+      # setup Python
+      - name: Setup Python
+        uses: actions/setup-python@v2
+
       # Checkout code
       - name: Checkout this Repo
         uses: actions/checkout@v2
             
-      # print contents of GITHUB_WORKSPACE dir
-      - name: verify contents
-        run: ls "${{ github.workspace }}"
+      # # print contents of GITHUB_WORKSPACE dir
+      # - name: verify contents
+      #   run: ls "${{ github.workspace }}"
         
       # Runs a this repo's action
       - name: Run Build action

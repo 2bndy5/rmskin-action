@@ -1,5 +1,5 @@
 # Container image that runs your code
-FROM python
+FROM alpine:latest
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
 COPY enter_rmskin_builder.sh /enter_rmskin_builder.sh

@@ -84,10 +84,7 @@ def main():
         root_path = root_path[:-1]
     if args.dir_out is not None and args.dir_out.endswith(os.sep):
         args.dir_out = args.dir_out[:-1]
-
-    print(f"using {root_path}")
-    for d in os.scandir(path=root_path):
-        print(d)
+    print(f"using path: {root_path}")
 
     # capture the directory tree
     for dirpath, dirnames, filenames in os.walk(root_path):
