@@ -11,7 +11,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:  
   Build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       # Checkout code
       - name: Checkout this Repo
