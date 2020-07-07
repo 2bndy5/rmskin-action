@@ -56,7 +56,7 @@ Example Usage
             # Runs a rmskin packager action
             - name: Run Build action
               id: builder
-              uses: 2bndy5/rmskin-action@master
+              uses: 2bndy5/rmskin-action@v1.1.2
 
             # Use the output from the `builder` step
             - name: Print the output filename
