@@ -6,7 +6,10 @@
 rmskin-action
 =============
 
-A Python-based Github action tool to package a Repository's Rainmeter Content into a validating .rmskin file for Rainmeter's Skin Installer
+A Python-based Github action tool to package a Repository's Rainmeter Content into a validating .rmskin file for Rainmeter's Skin Installer.
+
+.. important:: If the repository contains a RMSKIN.bmp image to used as a header image in the rmskin package, then it must be using 24-bit colors. Additionally, if the image is not exactly 400x60, then this action's python script will resize it accordingly.
+
 
 Input Arguments
 ===============
