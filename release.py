@@ -129,7 +129,7 @@ def main():
         )
     # read options from RMSKIN.ini
     arc_name = args.title
-    version = "auto"
+    version = args.version
     config = configparser.ConfigParser()
     if HAS_COMPONENTS["RMSKIN.ini"]:
         config.read(root_path + os.sep + "RMSKIN.ini")
