@@ -159,7 +159,7 @@ def main():
             if len(load_t):  # if a file set to load on-install
                 # exit early if loaded file does not exist
                 with open(
-                    root_path + os.sep + load_t + "s" + os.sep + load, "r"
+                    root_path + os.sep + load_t + "s" + os.sep + (load if load_t == "Skin" else load + os.sep + "Rainmeter.ini"), "r"
                 ) as temp:
                     if temp is None:
                         raise RuntimeError("On-install loaded file does not exits.")
