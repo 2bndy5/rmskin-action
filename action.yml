@@ -3,7 +3,7 @@ description: packaging tool for Rainmeter User Content
 
 # for the badge
 branding:
-  icon: 'droplet'  
+  icon: 'droplet'
 
 inputs:
   version: # 'auto'
@@ -28,8 +28,9 @@ inputs:
     default: "/github/workspace"
 
 outputs:
-    arc_name: # path to & name of archive file that was generated
-    description: 'name of rmskin file'
+  arc_name: # path to & name of archive file that was generated
+    description: "name of rmskin file"
+
 runs:
     using: 'docker'
     image: 'Dockerfile'
