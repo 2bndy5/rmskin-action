@@ -45,7 +45,7 @@ jobs:
         id: builder
         uses: 2bndy5/rmskin-action@master
         with:
-          path: ${{ github.workspace }}/tests
+          path: tests
 
       # Use the output from the `builder` step
       - name: Print the output filename
