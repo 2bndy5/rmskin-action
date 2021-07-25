@@ -125,3 +125,6 @@ dmypy.json
 
 # vscode folder
 .vscode/
+
+# ignore local test's output files
+*.rmskin

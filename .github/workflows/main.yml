@@ -10,10 +10,29 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  Build:
+  Check python package:
     runs-on: ubuntu-latest
     steps:
-      # Checkout code
+      - name: Checkout this Repo
+        uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pylint
+
+      - name: Check formatting
+        run: pylint rmskin_builder.py
+
+  Build:
+    # needs: Checkpython package
+    runs-on: ubuntu-latest
+    steps:
       - name: Checkout this Repo
         uses: actions/checkout@v2
 
@@ -25,8 +44,8 @@ jobs:
       - name: Run Build action
         id: builder
         uses: 2bndy5/rmskin-action@master
-        # with:
-        #   path: ${{ github.workspace }}
+        with:
+          path: ${{ github.workspace }}/tests
 
       # Use the output from the `builder` step
       - name: Print the output filename
