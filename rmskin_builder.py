@@ -186,9 +186,20 @@ def validate_header_image():
             img.save(BUILD_DIR + "RMSKIN.bmp")
 
 
+def is_dll_32(dll_file):
+    """Returns True if dll file is compiled for 32 bit machines, otherwise False"""
+    # fast_load=True means just get headers
+    bitness = pefile.PE(dll_file, fast_load=True)
+    bitness.close()  # do this now to copy file safely later
+    # pylint: disable=no-member
+    ret_val = bitness.FILE_HEADER.Machine == 0x014C
+    # pylint: enable=no-member
+    del bitness
+    return ret_val
+
+
 def init_zip_for_package(arch_name):
     """Create initial archive to use as RMSKIN package"""
-    # pylint: disable=too-many-nested-blocks
     output_path_to_archive = (
         (root_path if args.dir_out is None else args.dir_out) + os.sep + arch_name
     )
@@ -205,48 +216,22 @@ def init_zip_for_package(arch_name):
         for key, val in HAS_COMPONENTS.items():
             if not key.endswith(".ini") and val:
                 for dirpath, _, filenames in os.walk(root_path + os.sep + key):
-                    if key.endswith("Plugins"):
-                        # check bitness of plugins here & archive accordingly
-                        for file_name in filenames:
-                            if file_name.lower().endswith(".dll"):
-                                # let plugin_name be 2nd last folder name in dll's path
-                                bitness = pefile.PE(
-                                    dirpath + os.sep + file_name,
-                                    fast_load=True,  # just get headers
-                                )
-                                bitness.close()  # do this now to copy file safely later
-                                # pylint: disable=no-member
-                                if bitness.FILE_HEADER.Machine == 0x014C:
-                                    # archive this 32-bit plugin
-                                    arc_file.write(
-                                        dirpath + os.sep + file_name,
-                                        arcname=key
-                                        + os.sep
-                                        + "32bit"
-                                        + os.sep
-                                        + file_name,
-                                    )
-                                # pylint: enable=no-member
-                                else:
-                                    # archive this 64-bit plugin
-                                    arc_file.write(
-                                        dirpath + os.sep + file_name,
-                                        arcname=key
-                                        + os.sep
-                                        + "64bit"
-                                        + os.sep
-                                        + file_name,
-                                    )
-                                del bitness
-                            else:  # for misc files in plugins folders like READMEs
-                                arc_file.write(
-                                    dirpath + os.sep + file_name,
-                                    arcname=dirpath.replace(root_path + os.sep, "")
-                                    + os.sep
-                                    + file_name,
-                                )
-                    else:
-                        for file_name in filenames:
+                    for file_name in filenames:
+                        if (  # check bitness of plugins here & archive accordingly
+                            key.endswith("Plugins")
+                            and file_name.lower().endswith(".dll")
+                        ):
+                            # let plugin_name be 2nd last folder name in dll's path
+                            path_to_dll = dirpath + os.sep + file_name
+                            arc_file.write(
+                                dirpath + os.sep + file_name,
+                                arcname=key
+                                + os.sep
+                                + ("32bit" if is_dll_32(path_to_dll) else "64bit")
+                                + os.sep
+                                + file_name,
+                            )
+                        else:  # for all other files/folders
                             arc_file.write(
                                 dirpath + os.sep + file_name,
                                 arcname=dirpath.replace(root_path + os.sep, "")
@@ -254,7 +239,6 @@ def init_zip_for_package(arch_name):
                                 + file_name,
                             )
         # archive assembled; closing file
-    # pylint: enable=too-many-nested-blocks
     return output_path_to_archive
 
 def main():
