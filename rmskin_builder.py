@@ -20,6 +20,7 @@ Ideal Repo Structure
     quickly.
 """
 import os
+import sys
 import argparse
 import configparser
 import zipfile
@@ -88,11 +89,10 @@ HAS_COMPONENTS = {
     "RMSKIN.bmp": False,
 }
 
-
-def discover_components():
+def discover_components(path):
     """The method that does priliminary dscovery of rmskin package components."""
-    for dirpath, dirnames, filenames in os.walk(root_path):
-        dirpath = dirpath.replace(root_path, "")
+    for dirpath, dirnames, filenames in os.walk(path):
+        dirpath = dirpath.replace(path, "")
         if dirpath.endswith("Skins"):
             HAS_COMPONENTS["Skins"] = len(dirnames)
             logger.info("Found %d possible Skin(s)", HAS_COMPONENTS["Skins"])
@@ -121,13 +121,13 @@ def discover_components():
             dirnames.clear()
 
 
-def parse_rmskin_ini():
+def parse_rmskin_ini(args, path, build_dir):
     """Read the RMSKIN.ini and write a copy for building the RMSKIN package."""
     arc_name = args.title
     version = args.version
     config = configparser.ConfigParser()
 
-    config.read(root_path + os.sep + "RMSKIN.ini")
+    config.read(path + os.sep + "RMSKIN.ini")
     if "rmskin" in config:
         if "Version" in config["rmskin"]:
             version = config["rmskin"]["Version"]
@@ -157,7 +157,7 @@ def parse_rmskin_ini():
         if len(load_t):  # if a file set to load on-install
             # exit early if loaded file does not exist
             temp = (
-                root_path
+                path
                 + os.sep
                 + load_t
                 + "s"
@@ -168,22 +168,22 @@ def parse_rmskin_ini():
                 raise RuntimeError("On-install loaded file does not exits.")
     else:
         raise RuntimeError("RMSKIN.ini is malformed")
-    with open(BUILD_DIR + "RMSKIN.ini", "w") as conf:
+    with open(build_dir + "RMSKIN.ini", "w") as conf:
         config.write(conf)  # Dump changes/corrections to temp build dir
     return (arc_name, version)
 
 
-def validate_header_image():
+def validate_header_image(path, build_dir):
     """Make sure header image (if any) is ready to package"""
     if HAS_COMPONENTS["RMSKIN.bmp"]:
-        with Image.open(root_path + os.sep + "RMSKIN.bmp") as img:
+        with Image.open(path + os.sep + "RMSKIN.bmp") as img:
             if img.width != 400 and img.height != 60:
                 logger.warning("Resizing header image to 400x60")
                 img = img.resize((400, 60))
             if img.mode != "RGB":
                 logger.warning("Correcting color space in header image.")
                 img = img.convert(mode="RGB")
-            img.save(BUILD_DIR + "RMSKIN.bmp")
+            img.save(build_dir + "RMSKIN.bmp")
 
 
 def is_dll_32(dll_file):
@@ -198,10 +198,10 @@ def is_dll_32(dll_file):
     return ret_val
 
 
-def init_zip_for_package(arch_name):
+def init_zip_for_package(arch_name, args, path, build_dir):
     """Create initial archive to use as RMSKIN package"""
     output_path_to_archive = (
-        (root_path if args.dir_out is None else args.dir_out) + os.sep + arch_name
+        (path if args.dir_out is None else args.dir_out) + os.sep + arch_name
     )
     with zipfile.ZipFile(
         output_path_to_archive,
@@ -211,11 +211,11 @@ def init_zip_for_package(arch_name):
     ) as arc_file:
         # write RMSKIN.ini and header image (RMSKIN.bmp) first
         if HAS_COMPONENTS["RMSKIN.bmp"]:
-            arc_file.write(BUILD_DIR + "RMSKIN.bmp", arcname="RMSKIN.bmp")
-        arc_file.write(BUILD_DIR + "RMSKIN.ini", arcname="RMSKIN.ini")
+            arc_file.write(build_dir + "RMSKIN.bmp", arcname="RMSKIN.bmp")
+        arc_file.write(build_dir + "RMSKIN.ini", arcname="RMSKIN.ini")
         for key, val in HAS_COMPONENTS.items():
             if not key.endswith(".ini") and val:
-                for dirpath, _, filenames in os.walk(root_path + os.sep + key):
+                for dirpath, _, filenames in os.walk(path + os.sep + key):
                     for file_name in filenames:
                         if (  # check bitness of plugins here & archive accordingly
                             key.endswith("Plugins")
@@ -234,7 +234,7 @@ def init_zip_for_package(arch_name):
                         else:  # for all other files/folders
                             arc_file.write(
                                 dirpath + os.sep + file_name,
-                                arcname=dirpath.replace(root_path + os.sep, "")
+                                arcname=dirpath.replace(path + os.sep, "")
                                 + os.sep
                                 + file_name,
                             )
@@ -243,10 +243,24 @@ def init_zip_for_package(arch_name):
 
 def main():
     """The main execution loop for creating a rmskin package."""
+    # collect cmd args
+    args = parser.parse_args()
+    root_path = args.path
+    # truncate trailing path seperator
+    root_path = root_path.rstrip(os.sep)
+    root_path = os.path.abspath(root_path)
+
+    # The temporary build dir for storing altered files
+    build_dir = root_path + os.sep + "build" + os.sep
+    if not os.path.isdir(build_dir):
+        os.mkdir(build_dir)
+
+    if args.dir_out is not None and args.dir_out.endswith(os.sep):
+        args.dir_out = args.dir_out.rstrip(os.sep)
     logger.info("Searching path: %s", root_path)
 
     # capture the directory tree
-    discover_components()
+    discover_components(root_path)
 
     # quit if bad dir struct
     if not (
@@ -256,30 +270,30 @@ def main():
         or HAS_COMPONENTS["@Vault"]
     ):
         raise RuntimeError(
-            f"repository structure for {root_path} is malformed. Found no Skins,"
+            f"Repository structure for {root_path} is malformed. Found no Skins,"
             " Layouts, Plugins, or @Vault assets."
         )
 
     # quit if no RMSKIN.ini
     if not HAS_COMPONENTS["RMSKIN.ini"]:
         raise RuntimeError(
-            f"repository structure for {root_path} is malformed. RMSKIN.ini file "
+            f"Repository structure for {root_path} is malformed. RMSKIN.ini file "
             "not found."
         )
 
     # read options from RMSKIN.ini
-    arc_name, version = parse_rmskin_ini()
+    arc_name, version = parse_rmskin_ini(args, root_path, build_dir)
 
     # make sure header image is correct size (400x60) & correct color space
-    validate_header_image()
+    validate_header_image(root_path, build_dir)
 
     # Now creating the archive
     archive_name = arc_name + "_" + version + ".rmskin"
-    path_to_archive = init_zip_for_package(archive_name)
+    path_to_archive = init_zip_for_package(archive_name, args, root_path, build_dir)
 
     compressed_size = 0
     compressed_size = os.path.getsize(path_to_archive)
-    logger.info("archive size = %d (0x%X)", compressed_size, compressed_size)
+    logger.info("Archive size = %d (0x%X)", compressed_size, compressed_size)
 
     # convert size to a bytes obj & prepend to custom footer
     custom_footer = struct.pack("q", compressed_size) + b"\x00RMSKIN\x00"
@@ -294,22 +308,8 @@ def main():
     if os.getenv("CI", "false").title().startswith("True"):
         print("::set-output name=arc_name::{}".format(archive_name))
     else:
-        logger.info("archive name: %s", archive_name)
+        logger.info("Archive name: %s", archive_name)
 
 
 if __name__ == "__main__":
-    # collect cmd args
-    args = parser.parse_args()
-    root_path = args.path
-    # truncate trailing path seperator
-    root_path = root_path.rstrip(os.sep)
-    root_path = os.path.abspath(root_path)
-
-    # The temporary build dir for storing altered files
-    BUILD_DIR = root_path + os.sep + "build" + os.sep
-    if not os.path.isdir(BUILD_DIR):
-        os.mkdir(BUILD_DIR)
-
-    if args.dir_out is not None and args.dir_out.endswith(os.sep):
-        args.dir_out = args.dir_out.rstrip(os.sep)
-    main()
+    sys.exit(main())

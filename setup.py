@@ -17,7 +17,7 @@ with open_codec(os.path.join(ROOT_DIR, "README.rst"), encoding="utf-8") as f:
     long_description = f.read()
 
 setup(
-    name="rmskin-action",
+    name="rmskin-builder",
     use_scm_version=True,
     setup_requires=["setuptools_scm"],
     description="A script that will attempt to assemble a validating Rainmeter skin "
@@ -38,7 +38,10 @@ setup(
     ],
     keywords="rainmeter rmskin archive builder",
     py_modules=["rmskin_builder"],
-    scripts=["./rmskin_builder.py"],
+    # scripts=["./rmskin_builder.py"],
+    entry_points = {
+        "console_scripts": ["rmskin-builder=rmskin_builder:main"],
+    },
     # Specifiy your homepage URL for your project here
     url=REPO,
     download_url=f"{REPO}/releases",
