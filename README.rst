@@ -45,13 +45,13 @@ Input Arguments
 .. note::
     You can use your repository's ``RMSKIN.ini`` file to override any above inputs except ``dir_out`` & ``path`` inputs.
 
-The above arguments are used as CLI arguments to the *rmskin-builder.py* script, but remember to
+The above arguments are used as CLI arguments to the *rmskin_builder.py* script, but remember to
 append the CLI arguments' name with a ``--``. For example, setting the ``path`` argument to use a
 relative directory called *tests*:
 
 .. code-block:: shell
 
-    rmskin-builder.py --path tests
+    rmskin-builder.exe --path tests
 
 Output Arguments
 ================
@@ -59,7 +59,7 @@ Output Arguments
 * ``arc_name`` : The name of the generated rmskin file saved in the
   path specified by ``dir_out`` input argument.
 
-If executing the *rmskin-builder.py* script when not in a Github Action Runner, then this output
+If executing the *rmskin_builder.py* script when not in a Github Action Runner, then this output
 argument will show in the script's log output (& not saved anywhere).
 
 Ideal Repo Structure
