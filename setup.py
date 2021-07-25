@@ -5,7 +5,6 @@ https://packaging.python.org/en/latest/distributing.html
 https://github.com/pypa/sampleproject
 """
 import os
-from codecs import open as open_codec  # To use a consistent encoding
 from setuptools import setup
 
 
@@ -13,7 +12,7 @@ ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
 REPO = "https://github.com/2bndy5/rmskin-action"
 
 # Get the long description from the README file
-with open_codec(os.path.join(ROOT_DIR, "README.rst"), encoding="utf-8") as f:
+with open(os.path.join(ROOT_DIR, "README.rst", "r", encoding="utf-8"), encoding="utf-8") as f:
     long_description = f.read()
 
 setup(
