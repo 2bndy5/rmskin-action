@@ -12,7 +12,7 @@ ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
 REPO = "https://github.com/2bndy5/rmskin-action"
 
 # Get the long description from the README file
-with open(os.path.join(ROOT_DIR, "README.rst", "r", encoding="utf-8"), encoding="utf-8") as f:
+with open(os.path.join(ROOT_DIR, "README.rst"), "r" , encoding="utf-8") as f:
     long_description = f.read()
 
 setup(
