@@ -1,8 +1,8 @@
 
 .. image:: https://github.com/2bndy5/rmskin-action/workflows/CI/badge.svg
     :target: https://github.com/2bndy5/rmskin-action/actions
-.. image:: https://img.shields.io/pypi/v/circuitpython-nrf24l01.svg
-    :target: https://pypi.python.org/pypi/circuitpython-nrf24l01
+.. image:: https://img.shields.io/pypi/v/rmskin-builder.svg
+    :target: https://pypi.python.org/pypi/rmskin-builder
     :alt: latest version on PyPI
 
 rmskin-action
