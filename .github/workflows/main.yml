@@ -10,7 +10,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  Check python package:
+  Check_Python_pkg:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout this Repo
@@ -30,7 +30,7 @@ jobs:
         run: pylint rmskin_builder.py
 
   Build:
-    # needs: Checkpython package
+    # needs: Check_Python_pkg
     runs-on: ubuntu-latest
     steps:
       - name: Checkout this Repo
