@@ -318,8 +318,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     root_path = args.path
     # truncate trailing path seperator
-    if root_path.endswith(os.sep):
-        root_path = root_path[:-1]
+    root_path = root_path.rstrip(os.sep)
     root_path = os.path.abspath(root_path)
 
     # The temporary build dir for storing altered files
