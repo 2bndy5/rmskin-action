@@ -50,16 +50,16 @@ jobs:
       - name: Checkout this Repo
         uses: actions/checkout@v2
 
-      # # print contents of GITHUB_WORKSPACE dir
-      # - name: verify contents
-      #   run: ls "${{ github.workspace }}"
-
       # Runs a this repo's action
       - name: Run Build action
         id: builder
         uses: 2bndy5/rmskin-action@master
         with:
           path: tests
+
+      # # print contents of GITHUB_WORKSPACE dir
+      # - name: verify contents
+      #   run: ls "${{ github.workspace }}"
 
       # Use the output from the `builder` step
       - name: Print the output filename
