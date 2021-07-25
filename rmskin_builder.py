@@ -89,6 +89,7 @@ HAS_COMPONENTS = {
     "RMSKIN.bmp": False,
 }
 
+
 def discover_components(path):
     """The method that does priliminary dscovery of rmskin package components."""
     for dirpath, dirnames, filenames in os.walk(path):
@@ -240,6 +241,7 @@ def init_zip_for_package(arch_name, args, path, build_dir):
                             )
         # archive assembled; closing file
     return output_path_to_archive
+
 
 def main():
     """The main execution loop for creating a rmskin package."""
