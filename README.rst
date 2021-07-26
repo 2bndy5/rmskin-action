@@ -4,6 +4,9 @@
 .. image:: https://img.shields.io/pypi/v/rmskin-builder.svg
     :target: https://pypi.python.org/pypi/rmskin-builder
     :alt: latest version on PyPI
+.. image:: https://static.pepy.tech/personalized-badge/rmskin-builder?period=total&units=international_system&left_color=grey&right_color=blue&left_text=PyPi%20Downloads
+    :target: https://pepy.tech/project/rmskin-builder
+    :alt: pepy stats
 
 rmskin-action
 =============
