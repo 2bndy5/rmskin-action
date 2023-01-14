@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 """
 A script that will attempt to assemble a validating Rainmeter skin package for
-quick and easy distibution on Github.
+quick and easy distribution on Github.
 
 Ideal Repo Structure
 ********************
@@ -91,7 +91,7 @@ HAS_COMPONENTS = {
 
 
 def discover_components(path):
-    """The method that does priliminary dscovery of rmskin package components."""
+    """The method that does preliminary discovery of rmskin package components."""
     for dirpath, dirnames, filenames in os.walk(path):
         dirpath = dirpath.replace(path, "")
         if dirpath.endswith("Skins"):
@@ -169,7 +169,7 @@ def parse_rmskin_ini(args, path, build_dir):
                 raise RuntimeError("On-install loaded file does not exits.")
     else:
         raise RuntimeError("RMSKIN.ini is malformed")
-    with open(build_dir + "RMSKIN.ini", "w") as conf:
+    with open(build_dir + "RMSKIN.ini", "w", encoding="utf-8") as conf:
         config.write(conf)  # Dump changes/corrections to temp build dir
     return (arc_name, version)
 
@@ -308,7 +308,8 @@ def main():
 
     # env var CI is always true when executed on a github action runner
     if os.getenv("CI", "false").title().startswith("True"):
-        print("::set-output name=arc_name::{}".format(archive_name))
+        with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as gh_out:
+            gh_out.write(f"arc_name={archive_name}")
     else:
         logger.info("Archive name: %s", archive_name)
 
