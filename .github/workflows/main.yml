@@ -21,7 +21,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: 3.7
+          python-version: 3.x
 
       - name: Install Dependencies
         run: |
@@ -53,7 +53,7 @@ jobs:
       # Runs a this repo's action
       - name: Run Build action
         id: builder
-        uses: 2bndy5/rmskin-action@master
+        uses: 2bndy5/rmskin-action@updates-1-2023
         with:
           path: tests
 

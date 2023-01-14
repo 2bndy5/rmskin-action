@@ -169,7 +169,7 @@ def parse_rmskin_ini(args, path, build_dir):
                 raise RuntimeError("On-install loaded file does not exits.")
     else:
         raise RuntimeError("RMSKIN.ini is malformed")
-    with open(build_dir + "RMSKIN.ini", "w") as conf:
+    with open(build_dir + "RMSKIN.ini", "w", encoding="utf-8") as conf:
         config.write(conf)  # Dump changes/corrections to temp build dir
     return (arc_name, version)
 
