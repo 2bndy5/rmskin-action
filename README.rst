@@ -101,17 +101,18 @@ Example Usage
         steps:
           # Checkout code
           - name: Checkout this Repo
-            uses: actions/checkout@v2
+            uses: actions/checkout@v3
 
           # Runs a rmskin packager action
           - name: Run Build action
             id: builder
-            uses: 2bndy5/rmskin-action@v1.1.6
+            uses: 2bndy5/rmskin-action@v1.1.8
 
           # Upload the asset (using the output from the `builder` step)
           - name: Upload Release Asset
             if: github.event_name == 'release'
-            uses: csexton/release-asset-action@master
+            uses: shogo82148/actions-upload-release-asset@v1
             with:
-              file: "${{ steps.builder.outputs.arc_name }}"
-              github-token: ${{ secrets.GITHUB_TOKEN }}
+              upload_url: ${{ github.event.release.upload_url }}
+              asset_path: ${{ steps.builder.outputs.arc_name }}
+              asset_content_type: application/zip
