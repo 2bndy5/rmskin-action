@@ -30,13 +30,15 @@ inputs:
 outputs:
   arc_name: # path to & name of archive file that was generated
     description: "name of rmskin file"
+    value: ${{ steps.rmskin-builder.outputs.arc_name }}
 
 runs:
-    using: 'docker'
-    image: 'Dockerfile'
-    args:
-      - ${{ inputs.path }}
-      - ${{ inputs.version }}
-      - ${{ inputs.author }}
-      - ${{ inputs.title }}
-      - ${{ inputs.dir_out }}
+    using: 'composite'
+    steps:
+      - name: Install rmskin-builder
+        shell: bash
+        run: python3 -m pip install rmskin-builder
+      - name: Run rmskin-builder
+        id: rmskin-builder
+        shell: bash
+        run: rmskin-builder --path=${{ inputs.path }} --version=${{ inputs.version }} --author=${{ inputs.author }} --title=${{ inputs.title }} --dir_out=${{ inputs.dir_out }}
