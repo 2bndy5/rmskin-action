@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=61", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rmskin-builder"
+description = "A script that will attempt to assemble a validating Rainmeter skin package for quick and easy distribution on Github."
+readme = "README.rst"
+keywords = ["rainmeter", "rainmeter-skin", "packaging"]
+license = {text = "MIT License"}
+authors = [
+    { name = "Brendan Doherty", email = "2bndy5@gmail.com" },
+]
+dependencies = [
+    "pefile",
+    "pillow",
+]
+classifiers = [
+    # https://pypi.org/pypi?%3Aaction=list_classifiers
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Topic :: System :: Archiving :: Packaging",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+]
+dynamic = ["version"]
+
+[project.scripts]
+rmskin-builder = "rmskin_builder:main"
+
+[project.urls]
+source =  "https://github.com/2bndy5/rmskin-builder"
+tracker = "https://github.com/2bndy5/rmskin-builder/issues"
+
+# ... other project metadata fields as specified in:
+#     https://packaging.python.org/en/latest/specifications/declaring-project-metadata/
+
+[tool.setuptools]
+py-modules = ["rmskin_builder"]
+
+[tool.setuptools_scm]
+# It would be nice to include the commit hash in the version, but that
+# can't be done in a PEP 440-compatible way.
+version_scheme= "no-guess-dev"
+# Test PyPI does not support local versions.
+local_scheme = "no-local-version"
+fallback_version = "0.0.0"

@@ -67,7 +67,8 @@ parser.add_argument(
     metavar='"str"',
     type=str,
     default=None,
-    help="Output path to save released package file. This optional & only used when specified.",
+    help="Output path to save released package file. "
+    "This optional & only used when specified.",
 )
 
 # setup logging output
@@ -140,7 +141,7 @@ def parse_rmskin_ini(args, path, build_dir):
                     "refs/tags/", ""
                 )
             config["rmskin"]["Version"] = version
-        if not "Author" in config["rmskin"]:
+        if "Author" not in config["rmskin"]:
             # maybe someday, aggregate list of authors from
             # discovered skins' metadata->Author fields
             config["rmskin"]["Author"] = args.author
@@ -153,7 +154,7 @@ def parse_rmskin_ini(args, path, build_dir):
         logger.info("Using Name (%s) & Version (%s)", arc_name, version)
         load_t = config["rmskin"]["LoadType"]  # ex: "Skin"
         load = config["rmskin"]["Load"]  # ex: "Skin_Root\\skin.ini"
-        # for cross-platform compatibility, adjust windows-style path seperators
+        # for cross-platform compatibility, adjust windows-style path separators
         load = load.replace("\\", os.sep)
         if len(load_t):  # if a file set to load on-install
             # exit early if loaded file does not exist
@@ -248,7 +249,7 @@ def main():
     # collect cmd args
     args = parser.parse_args()
     root_path = args.path
-    # truncate trailing path seperator
+    # truncate trailing path separator
     root_path = root_path.rstrip(os.sep)
     root_path = os.path.abspath(root_path)
 

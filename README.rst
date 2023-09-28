@@ -6,7 +6,7 @@
     :alt: latest version on PyPI
 .. image:: https://static.pepy.tech/personalized-badge/rmskin-builder?period=total&units=international_system&left_color=grey&right_color=blue&left_text=PyPi%20Downloads
     :target: https://pepy.tech/project/rmskin-builder
-    :alt: pepy stats
+    :alt: pipy download stats
 
 rmskin-action
 =============
@@ -24,7 +24,7 @@ rmskin-builder Python package
 
 This action's *rmskin-builder.py* is now also available as a Python executable script via PyPI.
 However, it is important that your Python installation's *Scripts* folder is found in your
-Operating System's environment variable ``PATH``. If you're using a Python virtual envirnment,
+Operating System's environment variable ``PATH``. If you're using a Python virtual environment,
 then the *Scripts* folder does not need to be in your Operating System's environment variable
 ``PATH``.
 
