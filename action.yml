@@ -6,26 +6,26 @@ branding:
   icon: 'droplet'
 
 inputs:
-  version: # 'auto'
+  version:
     description: "Version of the Rainmeter rmskin package. Defaults to last 8 digits of SHA from commit or reference tags."
     required: false
     default: 'auto'
-  title: # 'repo-name'
+  title:
     description: "Name of the Rainmeter rmskin package. Defaults name of repository."
     required: false
     default: ${{ github.event.repository.name }}
-  author: # 'repo-owner'
+  author:
     description: "Account Username maintaining the rmskin package. Defaults to Username that triggered the commit."
     required: false
     default:  ${{ github.repository_owner }}
-  path: # '.'
+  path:
     description: "Base directory of repo being packaged. Defaults to workflow's workspace path"
     required: false
-    default: "/github/workspace"
-  dir_out: # '.'
+    default: "."
+  dir_out:
     description: "Path to save generated rmskin package. Defaults to workflow's workspace path"
     required: false
-    default: "/github/workspace"
+    default: "."
 
 outputs:
   arc_name: # path to & name of archive file that was generated
