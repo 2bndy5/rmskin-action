@@ -38,7 +38,7 @@ parser.add_argument(
     "--path",
     metavar='"str"',
     type=str,
-    default=os.getenv("GITHUB_WORKSPACE", "."),
+    default=".",
     help="Base path of a git repository. Defaults to working directory.",
 )
 parser.add_argument(
@@ -128,7 +128,7 @@ def parse_rmskin_ini(args, path, build_dir):
     version = args.version
     config = configparser.ConfigParser()
 
-    config.read(path + os.sep + "RMSKIN.ini")
+    config.read(str(Path(path, "RMSKIN.ini")))
     if "rmskin" in config:
         if "Version" in config["rmskin"]:
             version = config["rmskin"]["Version"]
@@ -157,15 +157,12 @@ def parse_rmskin_ini(args, path, build_dir):
         load = load.replace("\\", os.sep)
         if len(load_t):  # if a file set to load on-install
             # exit early if loaded file does not exist
-            temp = (
-                path
-                + os.sep
-                + load_t
-                + "s"
-                + os.sep
-                + (load if load_t == "Skin" else load + os.sep + "Rainmeter.ini")
+            temp = Path(
+                path,
+                f"{load_t}s",
+                (load if load_t == "Skin" else load + os.sep + "Rainmeter.ini"),
             )
-            if not os.path.isfile(temp):
+            if not temp.exists():
                 raise RuntimeError("On-install loaded file does not exits.")
     else:
         raise RuntimeError("RMSKIN.ini is malformed")
@@ -177,7 +174,7 @@ def parse_rmskin_ini(args, path, build_dir):
 def validate_header_image(path, build_dir):
     """Make sure header image (if any) is ready to package"""
     if HAS_COMPONENTS["RMSKIN.bmp"]:
-        with Image.open(path + os.sep + "RMSKIN.bmp") as img:
+        with Image.open(Path(path, "RMSKIN.bmp")) as img:
             if img.width != 400 and img.height != 60:
                 logger.warning("Resizing header image to 400x60")
                 img = img.resize((400, 60))
@@ -200,7 +197,7 @@ def is_dll_32(dll_file):
 
 def init_zip_for_package(arch_name, args, path, build_dir):
     """Create initial archive to use as RMSKIN package"""
-    output_path_to_archive = (args.dir_out or path) + os.sep + arch_name
+    output_path_to_archive = str(Path(args.dir_out or path, arch_name))
     with zipfile.ZipFile(
         output_path_to_archive,
         "w",
@@ -222,28 +219,34 @@ def init_zip_for_package(arch_name, args, path, build_dir):
                             # let plugin_name be 2nd last folder name in dll's path
                             path_to_dll = dirpath + os.sep + file_name
                             arc_file.write(
-                                dirpath + os.sep + file_name,
-                                arcname=key
-                                + os.sep
-                                + ("32bit" if is_dll_32(path_to_dll) else "64bit")
-                                + os.sep
-                                + file_name,
+                                str(Path(dirpath, file_name)),
+                                arcname=str(
+                                    Path(
+                                        key,
+                                        (
+                                            "32bit"
+                                            if is_dll_32(path_to_dll)
+                                            else "64bit"
+                                        ),
+                                        file_name,
+                                    )
+                                ),
                             )
                         else:  # for all other files/folders
                             arc_file.write(
-                                dirpath + os.sep + file_name,
-                                arcname=dirpath.replace(path + os.sep, "")
-                                + os.sep
-                                + file_name,
+                                str(Path(dirpath, file_name)),
+                                arcname=str(
+                                    Path(dirpath.replace(path + os.sep, ""), file_name)
+                                ),
                             )
         # archive assembled; closing file
     return output_path_to_archive
 
 
-def main(*args):
+def main(*argv):
     """The main execution loop for creating a rmskin package."""
     # collect cmd args
-    args = parser.parse_args(args or None)
+    args = parser.parse_args(argv or None)
     root_path = args.path
     # truncate trailing path separator
     root_path = root_path.rstrip(os.sep)
