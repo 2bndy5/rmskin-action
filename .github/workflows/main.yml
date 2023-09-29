@@ -47,7 +47,8 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-      - run: python3 -m build
+      - name: Create Distributions
+        run: python3 -m build
 
       - name: twine Check
         run: twine check dist/*
