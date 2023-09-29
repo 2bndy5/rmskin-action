@@ -21,6 +21,7 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Python
+        id: python-setup
         uses: actions/setup-python@v4
         with:
           python-version: 3.x
@@ -30,8 +31,8 @@ jobs:
 
       - uses: actions/cache@v3
         with:
-          path: $HOME\\.cache\\pre-commit
-          key: pre-commit_${{ hashFiles('.pre-commit-config.yaml') }}
+          path: ~/.cache/pre-commit
+          key: pre-commit_${{ steps.python-setup.outputs.python-version }}_${{ hashFiles('.pre-commit-config.yaml') }}
 
       - name: Check formatting
         run: pre-commit run --all-files
