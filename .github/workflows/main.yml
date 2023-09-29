@@ -40,8 +40,7 @@ jobs:
       - name: Get test coverage
         run: |
           coverage run -m pytest
-          coverage html
-          echo "$(coverage report --format markdown)" >> $GITHUB_STEP_SUMMARY
+          coverage report --format markdown >> $env:GITHUB_STEP_SUMMARY
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
