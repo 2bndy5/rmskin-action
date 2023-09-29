@@ -4,6 +4,7 @@ description: packaging tool for Rainmeter User Content
 # for the badge
 branding:
   icon: 'droplet'
+  color: 'blue'
 
 inputs:
   version:
