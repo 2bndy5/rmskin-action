@@ -1,0 +1,9 @@
+# Prevent line ending conversions by default to avoid problems with binary files.
+* -text
+
+# Known text files should have LF line endings.
+*.py text eol=lf
+*.rst text eol=lf
+*.toml text eol=lf
+LICENSE text eol=lf
+tests/demo_project/RMSKIN.ini text eol=crlf
