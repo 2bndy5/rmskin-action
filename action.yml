@@ -42,11 +42,11 @@ runs:
           python-version: 3.x
           update-environment: false
       - name: Install rmskin-builder
-        shell: bash
+        shell: pwsh
         run: ${{ steps.setup-python.outputs.python-path }} -m pip install rmskin-builder
       - name: Run rmskin-builder
         id: rmskin-builder
-        shell: bash
+        shell: pwsh
         run: >-
           rmskin-builder
           --path "${{ inputs.path }}"
