@@ -7,6 +7,9 @@
 .. image:: https://static.pepy.tech/personalized-badge/rmskin-builder?period=total&units=international_system&left_color=grey&right_color=blue&left_text=PyPi%20Downloads
     :target: https://pepy.tech/project/rmskin-builder
     :alt: pipy download stats
+.. image:: https://codecov.io/github/2bndy5/rmskin-action/graph/badge.svg?token=825YGO53XJ
+    :target: https://codecov.io/github/2bndy5/rmskin-action
+    :alt: Code Coverage
 
 rmskin-action
 =============

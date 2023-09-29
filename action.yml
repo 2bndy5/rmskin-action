@@ -48,7 +48,7 @@ runs:
         id: rmskin-builder
         shell: pwsh
         run: >-
-          rmskin-builder
+          ${{ steps.setup-python.outputs.python-path }} -m rmskin_builder
           --path "${{ inputs.path }}"
           --version "${{ inputs.version }}"
           --author "${{ inputs.author }}"
