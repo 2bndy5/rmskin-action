@@ -30,7 +30,7 @@ jobs:
 
       - uses: actions/cache@v3
         with:
-          path: ~/.cache/pre-commit
+          path: $HOME\\.cache\\pre-commit
           key: pre-commit_${{ hashFiles('.pre-commit-config.yaml') }}
 
       - name: Check formatting
