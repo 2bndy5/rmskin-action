@@ -18,7 +18,7 @@ inputs:
   author:
     description: "Account Username maintaining the rmskin package. Defaults to Username that triggered the commit."
     required: false
-    default:  ${{ github.repository_owner }}
+    default: ${{ github.repository_owner }}
   path:
     description: "Base directory of repo being packaged. Defaults to workflow's workspace path"
     required: false
