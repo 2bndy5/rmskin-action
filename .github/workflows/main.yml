@@ -52,19 +52,19 @@ jobs:
       - name: twine Check
         run: twine check dist/*
 
-      - name: twine Upload (pipy)
+      - name: twine Upload (pypi)
         if: github.event_name == 'release'
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.pypi_token }}
         run: twine upload dist/*
 
-      - name: twine Upload (test-pipy)
+      - name: twine Upload (test-pypi)
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.TEST_PYPI_TOKEN }}
-        run: twine upload dist/*
+        run: twine upload --repository testpypi dist/*
 
 
   Build:
