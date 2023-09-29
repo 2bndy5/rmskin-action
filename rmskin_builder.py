@@ -20,6 +20,7 @@ Ideal Repo Structure
     quickly.
 """
 import os
+from pathlib import Path
 import sys
 import argparse
 import configparser
@@ -37,7 +38,7 @@ parser.add_argument(
     "--path",
     metavar='"str"',
     type=str,
-    default=os.getenv("GITHUB_WORKSPACE", os.getcwd()),
+    default=os.getenv("GITHUB_WORKSPACE", "."),
     help="Base path of a git repository. Defaults to working directory.",
 )
 parser.add_argument(
@@ -59,7 +60,7 @@ parser.add_argument(
     "--title",
     metavar='"str"',
     type=str,
-    default=os.path.split(os.getcwd())[1],
+    default=Path.cwd().name,
     help="Title of released package. This should be just the github repo name.",
 )
 parser.add_argument(
@@ -67,16 +68,15 @@ parser.add_argument(
     metavar='"str"',
     type=str,
     default=None,
-    help="Output path to save released package file. This optional & only used when specified.",
+    help="Output path to save released package file. "
+    "This optional & only used when specified.",
 )
 
 # setup logging output
 logging.basicConfig()
-LOGGER_NAME = os.path.split(__file__)[1].split(".")[0].split("_")
-LOGGER_NAME[0] = LOGGER_NAME[0].upper()
-LOGGER_NAME[1] = LOGGER_NAME[1].title()
-LOGGER_NAME = " ".join(LOGGER_NAME)
-logger = logging.getLogger(LOGGER_NAME)
+MODULE_NAME = Path(__file__).name.strip(".py").split("_")
+assert len(MODULE_NAME) == 2
+logger = logging.getLogger(" ".join([MODULE_NAME[0].upper(), MODULE_NAME[1].title()]))
 logger.setLevel(logging.INFO)
 
 #: The `dict` of package components discovered by the `main()` loop
@@ -140,7 +140,7 @@ def parse_rmskin_ini(args, path, build_dir):
                     "refs/tags/", ""
                 )
             config["rmskin"]["Version"] = version
-        if not "Author" in config["rmskin"]:
+        if "Author" not in config["rmskin"]:
             # maybe someday, aggregate list of authors from
             # discovered skins' metadata->Author fields
             config["rmskin"]["Author"] = args.author
@@ -153,7 +153,7 @@ def parse_rmskin_ini(args, path, build_dir):
         logger.info("Using Name (%s) & Version (%s)", arc_name, version)
         load_t = config["rmskin"]["LoadType"]  # ex: "Skin"
         load = config["rmskin"]["Load"]  # ex: "Skin_Root\\skin.ini"
-        # for cross-platform compatibility, adjust windows-style path seperators
+        # for cross-platform compatibility, adjust windows-style path separators
         load = load.replace("\\", os.sep)
         if len(load_t):  # if a file set to load on-install
             # exit early if loaded file does not exist
@@ -192,18 +192,15 @@ def is_dll_32(dll_file):
     # fast_load=True means just get headers
     bitness = pefile.PE(dll_file, fast_load=True)
     bitness.close()  # do this now to copy file safely later
-    # pylint: disable=no-member
+    assert bitness.FILE_HEADER is not None and hasattr(bitness.FILE_HEADER, "Machine")
     ret_val = bitness.FILE_HEADER.Machine == 0x014C
-    # pylint: enable=no-member
     del bitness
     return ret_val
 
 
 def init_zip_for_package(arch_name, args, path, build_dir):
     """Create initial archive to use as RMSKIN package"""
-    output_path_to_archive = (
-        (path if args.dir_out is None else args.dir_out) + os.sep + arch_name
-    )
+    output_path_to_archive = (args.dir_out or path) + os.sep + arch_name
     with zipfile.ZipFile(
         output_path_to_archive,
         "w",
@@ -243,12 +240,12 @@ def init_zip_for_package(arch_name, args, path, build_dir):
     return output_path_to_archive
 
 
-def main():
+def main(*args):
     """The main execution loop for creating a rmskin package."""
     # collect cmd args
-    args = parser.parse_args()
+    args = parser.parse_args(args or None)
     root_path = args.path
-    # truncate trailing path seperator
+    # truncate trailing path separator
     root_path = root_path.rstrip(os.sep)
     root_path = os.path.abspath(root_path)
 
@@ -293,7 +290,6 @@ def main():
     archive_name = arc_name + "_" + version + ".rmskin"
     path_to_archive = init_zip_for_package(archive_name, args, root_path, build_dir)
 
-    compressed_size = 0
     compressed_size = os.path.getsize(path_to_archive)
     logger.info("Archive size = %d (0x%X)", compressed_size, compressed_size)
 
@@ -307,12 +303,12 @@ def main():
     logger.info("Archive successfully prepared.")
 
     # env var CI is always true when executed on a github action runner
-    if os.getenv("CI", "false").title().startswith("True"):
+    if "GITHUB_OUTPUT" in os.environ:
         with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as gh_out:
             gh_out.write(f"arc_name={archive_name}")
-    else:
+    else:  # pragma: no cover
         logger.info("Archive name: %s", archive_name)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     sys.exit(main())

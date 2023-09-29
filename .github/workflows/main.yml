@@ -12,8 +12,8 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  Python_pkg:
-    runs-on: ubuntu-latest
+  Python:
+    runs-on: windows-latest
     steps:
       - name: Checkout this Repo
         uses: actions/checkout@v4
@@ -23,14 +23,29 @@ jobs:
         with:
           python-version: 3.x
 
-      - name: Install Dependencies
+      - name: Install Workflow Dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install --upgrade setuptools wheel twine pylint
+          python -m pip install build twine pre-commit -r tests/requirements.txt -r requirements.txt
+          python -m build
+
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit_${{ hashFiles('.pre-commit-config.yaml') }}
 
       - name: Check formatting
-        run: pylint rmskin_builder.py
+        run: pre-commit run --all-files
+
+      - name: Get test coverage
+        run: |
+          coverage run -m pytest
+          coverage html
+          echo "$(coverage report --format markdown)" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - name: twine Check
         run: |
@@ -45,7 +60,8 @@ jobs:
         run: twine upload dist/*
 
   Build:
-    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref_name == 'master'
+    runs-on: windows-latest
     steps:
       - name: Checkout this Repo
         uses: actions/checkout@v4
@@ -55,11 +71,7 @@ jobs:
         id: builder
         uses: 2bndy5/rmskin-action@master
         with:
-          path: tests
-
-      # # print contents of GITHUB_WORKSPACE dir
-      # - name: verify contents
-      #   run: ls "${{ github.workspace }}"
+          path: tests/demo_project
 
       # Use the output from the `builder` step
       - name: Print the output filename
