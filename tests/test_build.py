@@ -24,7 +24,7 @@ def test_run(
     from rmskin_builder import main
 
     caplog.set_level(logging.DEBUG, logger="RMSKIN Builder")
-    main()
+    main("--path", str(tmpdir))
 
     for line in gh_out.read_text(encoding="utf-8").splitlines():
         if line.startswith("arc_name="):

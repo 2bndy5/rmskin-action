@@ -38,7 +38,7 @@ parser.add_argument(
     "--path",
     metavar='"str"',
     type=str,
-    default=os.getenv("GITHUB_WORKSPACE", os.getcwd()),
+    default=os.getenv("GITHUB_WORKSPACE", "."),
     help="Base path of a git repository. Defaults to working directory.",
 )
 parser.add_argument(
@@ -60,7 +60,7 @@ parser.add_argument(
     "--title",
     metavar='"str"',
     type=str,
-    default=os.path.split(os.getcwd())[1],
+    default=Path.cwd().name,
     help="Title of released package. This should be just the github repo name.",
 )
 parser.add_argument(
@@ -240,10 +240,10 @@ def init_zip_for_package(arch_name, args, path, build_dir):
     return output_path_to_archive
 
 
-def main():
+def main(*args):
     """The main execution loop for creating a rmskin package."""
     # collect cmd args
-    args = parser.parse_args()
+    args = parser.parse_args(args or None)
     root_path = args.path
     # truncate trailing path separator
     root_path = root_path.rstrip(os.sep)
