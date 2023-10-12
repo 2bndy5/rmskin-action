@@ -28,8 +28,8 @@ dependencies = {file = ["requirements.txt"]}
 rmskin-builder = "rmskin_builder:main"
 
 [project.urls]
-source =  "https://github.com/2bndy5/rmskin-builder"
-tracker = "https://github.com/2bndy5/rmskin-builder/issues"
+source =  "https://github.com/2bndy5/rmskin-action"
+tracker = "https://github.com/2bndy5/rmskin-action/issues"
 
 # ... other project metadata fields as specified in:
 #     https://packaging.python.org/en/latest/specifications/declaring-project-metadata/
