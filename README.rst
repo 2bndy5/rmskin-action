@@ -1,9 +1,9 @@
 |py-ci-badge| |action-ci-badge| |PyPi-version| |PyPi-stats| |codecov-badge|
 
-.. |py-ci-badge| image:: https://github.com/2bndy5/rmskin-action/workflows/Python/badge.svg
-    :target: https://github.com/2bndy5/rmskin-action/actions
-.. |action-ci-badge| image:: https://github.com/2bndy5/rmskin-action/workflows/Action/badge.svg
-    :target: https://github.com/2bndy5/rmskin-action/actions
+.. |py-ci-badge| image:: https://github.com/2bndy5/rmskin-action/actions/workflows/python.yml/badge.svg
+    :target: https://github.com/2bndy5/rmskin-action/actions/workflows/python.yml
+.. |action-ci-badge| image:: https://github.com/2bndy5/rmskin-action/actions/workflows/self-test.yml/badge.svg
+    :target: https://github.com/2bndy5/rmskin-action/actions/workflows/self-test.yml
 .. |PyPi-version| image:: https://img.shields.io/pypi/v/rmskin-builder.svg
     :target: https://pypi.python.org/pypi/rmskin-builder
     :alt: latest version on PyPI

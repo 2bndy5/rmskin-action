@@ -42,7 +42,7 @@ runs:
         shell: pwsh
         id: rmskin-builder
         run: >-
-          uvx rmskin-builder
+          uvx rmskin-builder@1.2.0
           --path "${{ inputs.path }}"
           --version "${{ inputs.version }}"
           --author "${{ inputs.author }}"
