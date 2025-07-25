@@ -36,20 +36,13 @@ outputs:
 runs:
     using: 'composite'
     steps:
-      - name: setup-python
-        id: setup-python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.x
-          update-environment: false
-      - name: Install rmskin-builder
-        shell: pwsh
-        run: ${{ steps.setup-python.outputs.python-path }} -m pip install rmskin-builder
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v6
       - name: Run rmskin-builder
-        id: rmskin-builder
         shell: pwsh
+        id: rmskin-builder
         run: >-
-          ${{ steps.setup-python.outputs.python-path }} -m rmskin_builder
+          uvx rmskin-builder
           --path "${{ inputs.path }}"
           --version "${{ inputs.version }}"
           --author "${{ inputs.author }}"

@@ -1,13 +1,16 @@
+|py-ci-badge| |action-ci-badge| |PyPi-version| |PyPi-stats| |codecov-badge|
 
-.. image:: https://github.com/2bndy5/rmskin-action/workflows/CI/badge.svg
+.. |py-ci-badge| image:: https://github.com/2bndy5/rmskin-action/workflows/Python/badge.svg
     :target: https://github.com/2bndy5/rmskin-action/actions
-.. image:: https://img.shields.io/pypi/v/rmskin-builder.svg
+.. |action-ci-badge| image:: https://github.com/2bndy5/rmskin-action/workflows/Action/badge.svg
+    :target: https://github.com/2bndy5/rmskin-action/actions
+.. |PyPi-version| image:: https://img.shields.io/pypi/v/rmskin-builder.svg
     :target: https://pypi.python.org/pypi/rmskin-builder
     :alt: latest version on PyPI
-.. image:: https://static.pepy.tech/personalized-badge/rmskin-builder?period=total&units=international_system&left_color=grey&right_color=blue&left_text=PyPi%20Downloads
+.. |PyPi-stats| image:: https://static.pepy.tech/personalized-badge/rmskin-builder?period=total&units=international_system&left_color=grey&right_color=blue&left_text=PyPi%20Downloads
     :target: https://pepy.tech/project/rmskin-builder
     :alt: pipy download stats
-.. image:: https://codecov.io/github/2bndy5/rmskin-action/graph/badge.svg?token=825YGO53XJ
+.. |codecov-badge| image:: https://codecov.io/github/2bndy5/rmskin-action/graph/badge.svg?token=825YGO53XJ
     :target: https://codecov.io/github/2bndy5/rmskin-action
     :alt: Code Coverage
 
@@ -93,12 +96,15 @@ Example Usage
 
     on:
       push:
+        tags:
+          - '*'
       pull_request:
-      release:
-        types: [published]
 
     jobs:
       Build_n_Release:
+        permissions:
+          # needed permission to upload a file to a GitHub release
+          contents: write
         runs-on: ubuntu-latest
 
         steps:
@@ -109,13 +115,11 @@ Example Usage
           # Runs a rmskin packager action
           - name: Run Build action
             id: builder
-            uses: 2bndy5/rmskin-action@v1.1.8
+            uses: 2bndy5/rmskin-action@v1.2.0
 
           # Upload the asset (using the output from the `builder` step)
           - name: Upload Release Asset
-            if: github.event_name == 'release'
-            uses: shogo82148/actions-upload-release-asset@v1
-            with:
-              upload_url: ${{ github.event.release.upload_url }}
-              asset_path: ${{ steps.builder.outputs.arc_name }}
-              asset_content_type: application/zip
+            if: startsWith(github.ref, 'refs/tags/')
+            env:
+              GITHUB_TOKEN: ${{ github.token }}
+            run: gh release upload ${{ github.ref_name }} ${{ steps.builder.outputs.arc_name }}
