@@ -40,6 +40,7 @@ jobs:
       - name: Get test coverage
         run: |
           uv run coverage run -m pytest
+          uv run coverage json
           uv run coverage report --format markdown >> $env:GITHUB_STEP_SUMMARY
 
       - name: Upload coverage reports to Codecov
