@@ -58,6 +58,7 @@ testpaths = ["tests"]
 
 [tool.coverage.run]
 source = ["rmskin_builder"]
+relative_files = true
 
 [dependency-groups]
 dev = [
