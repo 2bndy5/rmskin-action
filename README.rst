@@ -108,16 +108,14 @@ Example Usage
         runs-on: ubuntu-latest
 
         steps:
-          # Checkout code
           - name: Checkout this Repo
             uses: actions/checkout@v3
 
-          # Runs a rmskin packager action
           - name: Run Build action
             id: builder
             uses: 2bndy5/rmskin-action@v1.2.0
 
-          # Upload the asset (using the output from the `builder` step)
+          # Upload the release asset (using the output from the `builder` step)
           - name: Upload Release Asset
             if: startsWith(github.ref, 'refs/tags/')
             env:

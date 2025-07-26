@@ -34,7 +34,7 @@ jobs:
           path: ~/.cache/pre-commit
           key: pre-commit_${{ steps.setup-uv.outputs.uv-version }}_${{ hashFiles('.pre-commit-config.yaml') }}
 
-      - name: Check formatting
+      - name: Sanitize files
         run: uv run pre-commit run --all-files
 
       - name: Get test coverage
