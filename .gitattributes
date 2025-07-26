@@ -1,9 +1,22 @@
-# Prevent line ending conversions by default to avoid problems with binary files.
-* -text
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
 
-# Known text files should have LF line endings.
+# Explicitly declare text files you want to always be normalized and converted
+# to native line endings on checkout.
 *.py text eol=lf
-*.rst text eol=lf
+*.pyi text eol=lf
+*.css text eol=lf
+*.md text eol=lf
+*.rs text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
 *.toml text eol=lf
+*.lock text eol=lf
+.gitattributes text eol=lf
+.gitignore text eol=lf
+*.txt text eol=lf
+*.nu text eol=lf
+nurfile text eol=lf
+*.json text eol=lf
 LICENSE text eol=lf
 tests/demo_project/RMSKIN.ini text eol=crlf

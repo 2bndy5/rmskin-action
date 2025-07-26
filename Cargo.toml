@@ -1,0 +1,56 @@
+[package]
+name = "rmskin-builder"
+description = "A CLI tool to package Rainmeter Skins into a .rmskin file."
+version = "1.2.0"
+edition = "2024"
+license = "MIT"
+repository = "https://github.com/2bndy5/rmskin-action"
+exclude = [
+    ".github/",
+    ".vscode/",
+    "nurfile",
+    "cspell.config.yml",
+    ".pre-commit-config.yaml",
+    "CONTRIBUTING.md",
+    "action*",
+    "rmskin_builder.pyi",
+    "pyproject.toml",
+    "uv.lock",
+]
+
+[[bin]]
+name = "rmskin-build"
+path = "src/main.rs"
+required-features = ["bin"]
+
+[lib]
+name = "rmskin_builder"
+# "cdylib" is necessary to produce a shared library for Python to import from.
+crate-type = ["lib", "cdylib"]
+
+[dependencies]
+anyhow = { version = "1.0.98", optional = true }
+clap = { version = "4.5.41", features = ["derive"], optional = true }
+colored = { version = "3.0.0", optional = true }
+image = { version = "0.25.6", default-features = false, features = ["bmp"] }
+log = "0.4.27"
+pyo3 = { version = "0.25.1", features = ["extension-module"], optional = true }
+pyo3-log = { version = "0.12.4", optional = true }
+rust-ini = "0.21.2"
+tempfile = "3.20.0"
+thiserror = "2.0.12"
+zip = { version = "4.3.0", default-features = false, features = ["deflate"] }
+
+[dev-dependencies]
+
+[features]
+default = []
+
+anyhow = ["dep:anyhow"]
+clap = ["dep:clap"]
+colored = ["dep:colored"]
+bin = ["anyhow", "clap", "colored"]
+
+pyo3-log = ["dep:pyo3-log"]
+pyo3 = ["dep:pyo3"]
+py-binding = ["pyo3", "pyo3-log", "clap"]

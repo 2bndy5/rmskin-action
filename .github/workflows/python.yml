@@ -1,22 +1,145 @@
 name: Python
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the main branch
+
 on:
   push:
     branches: [main]
+    paths:
+      - '**.{rs,py}'
+      - tests/**
+      - pyproject.toml
+      - uv.lock
+      - Cargo.{toml,lock}
+      - .github/workflows/python.yml
+    tags:
+      - '*'
   pull_request:
     branches: [main]
-  release:
-    types: [published]
+    paths:
+      - '**.{rs,py}'
+      - tests/**
+      - pyproject.toml
+      - uv.lock
+      - Cargo.{toml,lock}
+      - .github/workflows/python.yml
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build:
+  linux:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: ubuntu-latest
+            target: x86_64
+          - runner: ubuntu-latest
+            target: x86
+          - runner: ubuntu-latest
+            target: aarch64
+          - runner: ubuntu-latest
+            target: armv7
+          - runner: ubuntu-latest
+            target: s390x
+          - runner: ubuntu-latest
+            target: ppc64le
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          args: --release --out dist --find-interpreter
+          sccache: 'true'
+          manylinux: auto
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-linux-${{ matrix.platform.target }}
+          path: dist/*
+
+  windows:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: windows-latest
+            target: x64
+          - runner: windows-latest
+            target: x86
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+          architecture: ${{ matrix.platform.target }}
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          args: --release --out dist --find-interpreter
+          sccache: 'true'
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-windows-${{ matrix.platform.target }}
+          path: dist/*
+
+  macos:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - runner: macos-13
+            target: x86_64
+          - runner: macos-14
+            target: aarch64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          args: --release --out dist --find-interpreter
+          sccache: 'true'
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-macos-${{ matrix.platform.target }}
+          path: dist/*
+
+  sdist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+      - name: Build sdist
+        uses: PyO3/maturin-action@v1
+        with:
+          command: sdist
+          args: --out dist
+      - name: Upload sdist
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-sdist
+          path: dist/*
+
+  test:
     runs-on: windows-latest
     steps:
       - name: Checkout this Repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v6
@@ -27,31 +150,12 @@ jobs:
       - name: Install Workflow Dependencies
         run: uv sync
 
-      - uses: actions/cache@v4
-        with:
-          path: ~/.cache/pre-commit
-          key: pre-commit_${{ steps.setup-uv.outputs.uv-version }}_${{ hashFiles('.pre-commit-config.yaml') }}
-
-      - name: Sanitize files
-        run: uv run pre-commit run --all-files
-
-      - name: Get test coverage
-        run: |
-          uv run coverage run -m pytest
-          uv run coverage json
-          uv run coverage report --format markdown >> $env:GITHUB_STEP_SUMMARY
-
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v5
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        with:
-          verbose: true
-          fail_ci_if_error: true
+      - name: Run pytest
+        run: uv run pytest -v --log-cli-level DEBUG
 
   release:
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [linux, windows, macos, sdist, test]
     permissions:
       id-token: write
     steps:
@@ -63,8 +167,12 @@ jobs:
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v6
 
-      - name: Create Distributions
-        run: uvx --from build pyproject-build -o dist
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: wheels-*
+          path: dist
+          merge-multiple: true
 
       - name: twine Check
         run: uvx twine check dist/*
