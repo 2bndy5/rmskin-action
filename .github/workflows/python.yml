@@ -69,12 +69,18 @@ jobs:
       - name: twine Check
         run: uvx twine check dist/*
 
-      # now uses trusted publisher
+      # now uses trusted publishing
       - name: Publish package PyPI
         if: github.event_name == 'release'
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          verify-metadata: false
+          skip-existing: true
+
       - name: Publish package TestPyPI
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
+          verify-metadata: false
+          skip-existing: true
           repository-url: https://test.pypi.org/legacy/
