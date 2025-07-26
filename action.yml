@@ -36,20 +36,21 @@ outputs:
 runs:
     using: 'composite'
     steps:
-      - name: setup-python
-        id: setup-python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.x
-          update-environment: false
-      - name: Install rmskin-builder
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v6
+      - name: Normalize action path
         shell: pwsh
-        run: ${{ steps.setup-python.outputs.python-path }} -m pip install rmskin-builder
+        id: pre
+        run: |-
+          $action_path = $env:GITHUB_ACTION_PATH.TrimEnd('/', '\')
+          echo "action_path=$action_path" >> $env:GITHUB_OUTPUT
       - name: Run rmskin-builder
-        id: rmskin-builder
         shell: pwsh
+        id: rmskin-builder
         run: >-
-          ${{ steps.setup-python.outputs.python-path }} -m rmskin_builder
+          uvx
+          --constraints ${{ steps.pre.outputs.action_path }}/action-requirements.txt
+          rmskin-builder
           --path "${{ inputs.path }}"
           --version "${{ inputs.version }}"
           --author "${{ inputs.author }}"

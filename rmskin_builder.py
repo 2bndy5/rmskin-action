@@ -19,6 +19,7 @@ Ideal Repo Structure
     has also been created to facilitate development of Rainmeter skins on Github
     quickly.
 """
+
 import os
 from pathlib import Path
 import sys

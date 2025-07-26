@@ -1,4 +1,0 @@
-# for detirmining if a .dll file is for 64-bit or 32-bit
-pefile
-# for verifying header image file and resizing it accordingly
-pillow
