@@ -38,11 +38,19 @@ runs:
     steps:
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v6
+      - name: Normalize action path
+        shell: pwsh
+        id: pre
+        run: |-
+          $action_path = $env:GITHUB_ACTION_PATH.TrimEnd('/', '\\')
+          echo "action_path=$action_path" >> $env:GITHUB_OUTPUT
       - name: Run rmskin-builder
         shell: pwsh
         id: rmskin-builder
         run: >-
-          uvx rmskin-builder@1.2.0
+          uvx
+          --constraints ${{ steps.pre.outputs.action_path }}/action-requirements.txt
+          rmskin-builder
           --path "${{ inputs.path }}"
           --version "${{ inputs.version }}"
           --author "${{ inputs.author }}"
