@@ -39,6 +39,8 @@ jobs:
 
       - uses: cargo-bins/cargo-binstall@main
       - run: cargo binstall -y git-cliff cargo-edit
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Bump ${{ inputs.component }} version
         env:
@@ -46,7 +48,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BUMP_N_RELEASE }}
         run: nu .github/workflows/bump-n-release.nu ${{ inputs.component }}
 
-  update-changelog:
+  unreleased-notes:
     if: github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:

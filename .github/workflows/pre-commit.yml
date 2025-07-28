@@ -48,6 +48,8 @@ jobs:
         uses: cargo-bins/cargo-binstall@main
       - name: Install committed
         run: cargo binstall -y committed
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Check PR title
         run: >-
           echo "${{ github.event.pull_request.title }}"

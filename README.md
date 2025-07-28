@@ -56,6 +56,8 @@ jobs:
       # Upload the asset (using the output from the `builder` step)
       - name: Upload Release Asset
         if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: gh release upload ${{ github.ref_name }} ${{ steps.builder.outputs.arc_name }}
 ```
 
