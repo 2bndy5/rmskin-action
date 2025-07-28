@@ -1,6 +1,6 @@
 
-[![pypi-ci-badge]][pypi-ci-link]
 [![action-ci-badge]][action-ci-link]
+[![pypi-ci-badge]][pypi-ci-link]
 [![rust-ci-badge]][rust-ci-link]
 [![pypi-badge]][pypi-link]
 [![pypi-stats-badge]][pypi-stats-link]
@@ -21,7 +21,7 @@
 
 # rmskin-action
 
-A Github Action that packages a repository's Rainmeter Content into a validating
+A Github Action that packages a repository's Rainmeter content into a validating
 .rmskin file for Rainmeter's Skin Installer.
 
 ## Deployments
@@ -45,11 +45,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout code
       - name: Checkout this Repo
         uses: actions/checkout@v4
 
-      # Runs a rmskin packager action
+      # Run this rmskin-action
       - name: Run Build action
         id: builder
         uses: 2bndy5/rmskin-action@v1.2.0
@@ -73,29 +72,29 @@ rmskin-builder.exe --help
 
 ### Rust package
 
-[cargo-binstall]: https://github.com/cargo-binstall/cargo-binstall
+[cargo-binstall]: https://github.com/cargo-bins/cargo-binstall
 
 A Rust crate is published to take advantage of [cargo-binstall] for easy installing a portable binary executable.
 
 ```shell
 cargo binstall rmskin-builder
-rmskin build --help
+rmskin-build --help
 ```
 
 ## Input/CLI options
 
 | Option | Description | Required |
 |--------|:------------|:---------|
-| `version` | Version of the Rainmeter rmskin package. Defaults to last 8 digits of SHA from commit or ref/tags or otherwise 'x0x.y0y'. | no |
-| `title` | Name of the Rainmeter rmskin package. Defaults to name of repository or otherwise the last directory in the `path` argument. | no |
-| `author` | Account Username maintaining the rmskin package. Defaults to Username that triggered the action or otherwise 'Unknown'. | no |
 | `path` | Base directory of repo being packaged. Defaults to current working path. | no |
 | `dir-out` | Path to save generated rmskin package. Defaults to current working path. This can also be specified using `dir_out` for backward compatibility. | no |
+| `version` | Version of the Rainmeter rmskin package. Defaults to last 8 digits of SHA from commit or ref/tags or otherwise `x0x.y0y`. | no |
+| `title` | Name of the Rainmeter rmskin package. Defaults to name of repository or otherwise the last directory name in the `path` option. | no |
+| `author` | Account Username maintaining the rmskin package. Defaults to Username that triggered the action or the `git config user.name`; `Unknown` when all else fails. | no |
 
 > [!NOTE]
-> You can use your repository's `RMSKIN.ini` file to override any above inputs except `dir-out` & `path`.
+> You can use your project's `RMSKIN.ini` file to override any above inputs except `dir-out` and `path`.
 
-The above arguments can be used as CLI arguments
+The above arguments are also used as CLI arguments
 but remember to prepend `--` to option's name (eg `path` becomes `--path`).
 
 ## Output Variables
@@ -105,7 +104,7 @@ but remember to prepend `--` to option's name (eg `path` becomes `--path`).
 - `arc_name`: The same as `arc-name` output value.
   This output variable only exists for backward compatibility.
 
-When not in a Github Action Workflow, then this output variable will printed to
+When not executed in a Github Actions workflow, then this output variable will printed to
 stdout as `Archive name: **.rmskin`.
 
 ## Ideal Package Structure

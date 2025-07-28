@@ -57,7 +57,7 @@ Therefore, [pre-commit] can be run as with a one-line command using [uv] or [nur
 uv run pre-commit run --all-files
 ```
 
-Note, [uv] also automatically builds this project's python bindings when using `uv run`.
+Note, [uv] should also build this project's python binding when using `uv run`.
 
 ```shell
 nur pre-commit
@@ -77,12 +77,30 @@ nur lint
 
 ## Testing
 
-To simplify the lengthy commands to run [cargo-llvm-cov] and [cargo-nextest] tools in tandem,
-we use [nur] to parametrize the various options applicable to this project into tasks.
+> [!WARNING]
+> Do not use `cargo test` to run this project's tests.
+> This project's tests heavily rely on manipulating environment variables.
+> Instead, this project leverages [cargo-nextest] to isolate each test with
+> it's own environment context.
+> See [cargo-nextest documentation about altering environment variables][cargo-nextest-env-docs].
+
+[cargo-nextest-env-docs]: https://nexte.st/docs/configuration/env-vars/#altering-the-environment-within-tests
+
+To collect code coverage, this project uses [cargo-llvm-cov] which natively supports [cargo-nextest].
+However, the commands to run [cargo-llvm-cov] and [cargo-nextest] tools in tandem can be lengthy.
+We use [nur] to parametrize the various test options (applicable to this project) into tasks.
 
 ### Running tests
 
 Unit tests are performed using [cargo-nextest] while coverage is measured by [cargo-llvm-cov].
+
+There's also a python test to preserve backward compatibility with
+the older pure-python versions of this project.
+While code coverage is not measured with python, the python test can be run using [uv]:
+
+```shell
+uv run pytest
+```
 
 #### Run the tests
 
@@ -109,12 +127,11 @@ nur test -p ci
 #### Generate coverage report
 
 ```shell
-nur test llvm-cov
+nut test llvm-cov
 ```
 
 > [!TIP]
-> Additional arguments passed to `nur test llvm-cov` are
-> passed onto [cargo-llvm-cov].
+> Additional arguments passed to `nur test llvm-cov` are passed onto [cargo-llvm-cov].
 >
 > Pass `--open` to automatically open the built coverage report in your default browser.
 > Optional arguments are documented and shown in `nur test llvm-cov -h`.
@@ -140,4 +157,7 @@ To verify any documentation changes locally, we can use [nur] for that too:
 nur docs
 ```
 
-Optional arguments are documented and shown in `nur docs -h`.
+> [!TIP]
+> Optional arguments are documented and shown in `nur docs -h`.
+>
+> Pass `--open` (or `-o`) to automatically open the built documentation in your default browser.
