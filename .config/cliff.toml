@@ -18,7 +18,7 @@ body = """
   https://github.com/{{ remote.github.owner }}/{{ remote.github.repo }}
 {%- endmacro -%}
 {%- set UNRELEASED = "Unreleased" -%}
-{%- set init_commit = "f8863cc36d66708bfa0fb2fb1a219c7b2f97f7d6" -%}
+{%- set init_commit = "db6e3553b1917ad04ba52fa61c61f0216f4063e4" -%}
 {%- set this_version = UNRELEASED -%}
 
 {% if version -%}
@@ -84,23 +84,35 @@ trim = true
 # parse the commits based on https://www.conventionalcommits.org
 conventional_commits = true
 # filter out the commits that are not conventional
-filter_unconventional = true
+filter_unconventional = false
+require_conventional = false
 # don not skip commits with breaking changes
 protect_breaking_commits = true
 # regex for preprocessing the commit messages
 commit_preprocessors = [
     # remove issue numbers from commits
     { pattern = '\((\w+\s)?#([0-9]+)\)', replace = "" },
-    # re-title vague version bump commits (for older bump commits)
-    { pattern = 'chore\(([a-z0-9-]+)\): bump version to ', replace = 'build: bump $1 to v' },
-    # reassign bump commits to deps category (for older bump commits)
-    { pattern = 'chore: bump rf24', replace = 'build: bump rf24' },
-    # wrap package names in backticks
-    { pattern = '(rf24[a-z]*\-[a-z]+)', replace = '`$1`' },
 ]
 # regex for parsing and grouping commits
 commit_parsers = [
-    # The order of parsers matters.
+    { field = "github.pr_labels", pattern = "breaking", group = "<!-- 0 --> 💥 Breaking changes" },
+    { field = "github.pr_labels", pattern = "breaking-change", group = "<!-- 0 --> 💥 Breaking changes" },
+    { field = "github.pr_labels", pattern = "feature", group = "<!-- 1 --> 🚀 Added" },
+    { field = "github.pr_labels", pattern = "enhancement", group = "<!-- 1 --> 🚀 Added" },
+    { field = "github.pr_labels", pattern = "deprecated", group = "<!-- 2 --> 🚫 Deprecated" },
+    { field = "github.pr_labels", pattern = "removed", group = "<!-- 3 --> 🗑️ Removed" },
+    { field = "github.pr_labels", pattern = "bug", group = "<!-- 4 --> 🛠️ Fixed" },
+    { field = "github.pr_labels", pattern = "security", group = "<!-- 5 --> 🔐 Security" },
+    { field = "github.pr_labels", pattern = "dependencies", group = "<!-- 6 --> 📦 Dependency updates" },
+    { field = "github.pr_labels", pattern = "test", group = "<!-- 7 -->🚦 Tests"},
+    { field = "github.pr_labels", pattern = "tests", group = "<!-- 7 -->🚦 Tests"},
+    { field = "github.pr_labels", pattern = "documentation", group = "<!-- 8 --> 📝 Documentation" },
+    { field = "github.pr_labels", pattern = "refactor", group = "<!-- 9 --> 🗨️ Changed" },
+    { field = "github.pr_labels", pattern = "skip-changelog", skip = true },
+    { field = "github.pr_labels", pattern = "no-changelog", skip = true },
+    { field = "github.pr_labels", pattern = "invalid", skip = true },
+    # The order of parsers matters. Put rules for PR labels first to prioritize PR labels.
+    # Next we categorize by conventional commit group (`group: msg`).
     { field = "group", pattern = "add", group = "<!-- 1 --> 🚀 Added" },
     { field = "group", pattern = "feat", group = "<!-- 1 --> 🚀 Added" },
     { field = "group", pattern = "fix", group = "<!-- 4 --> 🛠️ Fixed" },
@@ -110,15 +122,35 @@ commit_parsers = [
     { field = "group", pattern = "docs", group = "<!-- 8 --> 📝 Documentation" },
     { field = "group", pattern = "chore", group = "<!-- 9 --> 🗨️ Changed" },
     { field = "group", pattern = "style", group = "<!-- 9 --> 🗨️ Changed" },
-    { field = "breaking", pattern = true, group = "<!-- 10 --> 💥 Breaking Changes" },
+    # this parser seems to break parsing of unconventional commit messages
+    # { field = "breaking", pattern = true, group = "<!-- 10 --> 💥 Breaking Changes" },
     { field = "group", pattern = "remove", group = "<!-- 3 --> 🗑️ Removed" },
     { field = "group", pattern = "deprecate", group = "<!-- 2 --> 🚫 Deprecated" },
     { field = "group", pattern = "delete", group = "<!-- 3 --> 🗑️ Removed" },
     { field = "group", pattern = "security", group = "<!-- 5 --> 🔐 Security" },
     { field = "group", pattern = "refactor", group = "<!-- 9 --> 🗨️ Changed" },
+    # Next we have filters for unconventional commit messages
+    { message = "^[a|A]dd", group = "<!-- 1 --> 🚀 Added" },
+    { message = "^.*: [s|S]upport", group = "<!-- 1 --> 🚀 Added" },
+    { message = "^.*: [a|A]dd", group = "<!-- 1 --> 🚀 Added" },
+    { message = "^.*: [d|D]eprecated", group = "<!-- 2 --> 🚫 Deprecated" },
+    { message = "^.*: [r|R]emove", group = "<!-- 3 --> 🗑️ Removed" },
+    { message = "^.*: [d|D]elete", group = "<!-- 3 --> 🗑️ Removed" },
+    { message = "^[f|F]ix", group = "<!-- 4 --> 🛠️ Fixed" },
+    { message = "^.*: [f|F]ix", group = "<!-- 4 --> 🛠️ Fixed" },
+    { message = "^.*: [s|S]ecure", group = "<!-- 5 --> 🔐 Security" },
+    { message = "^.*: [s|S]ecurity", group = "<!-- 5 --> 🔐 Security" },
+    { message = "^[t|T]est", group = "<!-- 7 -->🚦 Tests"},
+    { message = "[d|D]oc\\b", group = "<!-- 8 --> 📝 Documentation" },
+    { message = "[d|D]ocs", group = "<!-- 8 --> 📝 Documentation" },
+    { message = "[d|D]ocumentation", group = "<!-- 8 --> 📝 Documentation" },
+    # anything left after not being caught by filters above gets put in the "Changed" section
+    { message = "[r|R]efactor", group = "<!-- 9 --> 🗨️ Changed" },
+    { field = "github.pr_labels", pattern = ".*", group = "<!-- 9 --> 🗨️ Changed" },
+    { message = "^.*", group = "<!-- 9 --> 🗨️ Changed" },
 ]
 # filter out the commits that are not matched by commit parsers
-filter_commits = true
+filter_commits = false
 # sort the tags topologically
 topo_order = false
 # sort the commits inside sections by oldest/newest order
@@ -127,6 +159,6 @@ sort_commits = "oldest"
 # Only use tags with full version.
 tag_pattern = "v[0-9]+.[0-9]+.[0-9]+"
 
-[remote.github]
-owner = "2bndy5"
-repo = "arduino-report-size-deltas"
+# [remote.github]
+# owner = "2bndy5"
+# repo = "rmskin-action"

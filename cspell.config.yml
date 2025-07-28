@@ -11,9 +11,15 @@ words:
   - clippy
   - cookiecutter
   - Doherty
+  - ecure
+  - ecurity
+  - efactor
+  - elete
+  - emove
   - endfor
   - endgroup
   - endmacro
+  - eprecated
   - getattr
   - gnueabi
   - gnueabihf
@@ -28,6 +34,7 @@ words:
   - nextest
   - nurfile
   - nushell
+  - ocumentation
   - orhun
   - pwsh
   - pyclass
@@ -49,6 +56,8 @@ words:
   - thiserror
   - timeit
   - topo
+  - upport
 ignorePaths:
   - .gitattributes
   - .gitignore
+  - CHANGELOG.md
