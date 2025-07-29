@@ -29,7 +29,7 @@
 #    Locally, you can use `gh login` to interactively authenticate the user account.
 
 
-let IN_CI = $env | get --ignore-errors CI | default "false" | ($in == "true") or ($in == true)
+let IN_CI = $env | get --optional CI | default "false" | ($in == "true") or ($in == true)
 
 # Bump the version per the given component name (major, minor, patch)
 #
@@ -51,12 +51,18 @@ def bump-version [
     )
     print $"bumped ($result | get old) to ($result | get new)"
     # update the version in various places
+    # (
+    #     open action.yml --raw
+    #     | str replace $"STANDALONE_BIN_VER: '($result | get old)'" $"STANDALONE_BIN_VER: '($result | get new)'"
+    #     | save --force action.yml
+    # )
+    # print "Updated action.yml"
     (
-        open action.yml --raw
-        | str replace $"STANDALONE_BIN_VER: '($result | get old)'" $"STANDALONE_BIN_VER: '($result | get new)'"
-        | save --force action.yml
+        open action-requirements.txt --raw
+        | str replace $"rmskin-builder==($result | get old)" $"rmskin-builder==($result | get new)"
+        | save --force action-requirements.txt
     )
-    print "Updated action.yml"
+    print "Updated action-requirements.txt"
     (
         open README.md
         | str replace $"rmskin-action@v($result | get old)" $"rmskin-action@v($result | get new)"
