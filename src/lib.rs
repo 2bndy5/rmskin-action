@@ -39,14 +39,22 @@ pub fn main(cli_args: CliArgs) -> Result<(), RmSkinBuildError> {
         log::set_max_level(level);
     }
 
-    let project_path = cli_args.path.clone().unwrap_or(PathBuf::from("./"));
-    log::info!("Searching path: {project_path:?}");
+    let project_path = cli_args
+        .path
+        .clone()
+        .unwrap_or(PathBuf::from("./"))
+        .canonicalize()?;
+    {
+        // canonicalize() will ensure file_name() is not None, thus unwrap() safely.
+        let path_name = project_path.file_name().unwrap().to_string_lossy();
+        log::info!("Searching path: {path_name}");
+    }
     let components = discover_components(&project_path)?;
     if !components.is_valid() {
         return Err(RmSkinBuildError::MalformedProject);
     }
 
-    let build_dir = TempDir::new()?;
+    let build_dir = TempDir::new()?; // uses an absolute path
     if components.rm_skin_bmp {
         validate_header_image(&project_path, build_dir.path())?;
     }
