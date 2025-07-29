@@ -149,6 +149,8 @@ mod test {
                     "GITHUB_OUTPUT",
                     gh_out_file.path().to_string_lossy().to_string(),
                 );
+            } else {
+                env::remove_var("GITHUB_OUTPUT");
             }
         }
         assert!(main(cli_args).is_ok());
