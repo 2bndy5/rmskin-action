@@ -28,13 +28,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Rust
-        run: rustup update --no-self-update
       - name: Cache deps
         uses: actions/cache@v4
         with:
           path: ~/.cargo
-          key: cargo-lib-${{ hashFiles('lib/src/**', 'lib/Cargo.toml') }}
+          key: cargo-lint-${{ hashFiles('Cargo.lock') }}
+      - name: Setup Rust
+        run: rustup update --no-self-update
       - run: cargo clippy
       - run: cargo fmt --check
 

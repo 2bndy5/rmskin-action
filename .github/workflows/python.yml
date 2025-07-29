@@ -47,7 +47,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
@@ -147,6 +146,13 @@ jobs:
         with:
           enable-cache: true
 
+      - name: Cache deps
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo
+          key: python-test-${{ hashFiles('Cargo.lock', 'uv.lock') }}
+      - name: Setup Rust
+        run: rustup update --no-self-update
       - name: Install Workflow Dependencies
         run: uv sync
 
