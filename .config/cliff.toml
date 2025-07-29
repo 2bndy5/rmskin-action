@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # template for the changelog body
 # https://keats.github.io/tera/docs/#introduction
 body = """
-{%- macro remote_url() -%}
+{% macro remote_url() -%}
   https://github.com/{{ remote.github.owner }}/{{ remote.github.repo }}
 {%- endmacro -%}
 {%- set UNRELEASED = "Unreleased" -%}
@@ -62,13 +62,14 @@ Full commit diff: [`{% if previous.version -%}
 {%- endif %}...{{ last_commit }}`][{{ this_version }}]
 {% if github.contributors | filter(attribute="is_first_time", value=true) | length != 0 %}
   ## New Contributors
-{%- endif %}
-{% for contributor in github.contributors | filter(attribute="is_first_time", value=true) %}
-  - @{{ contributor.username }} made their first contribution
-    {%- if contributor.pr_number %} in \
-      [#{{ contributor.pr_number }}]({{ self::remote_url() }}/pull/{{ contributor.pr_number }}) \
-    {%- endif %}
-{%- endfor %}
+    {% for contributor in github.contributors | filter(attribute="is_first_time", value=true) %}
+    - @{{ contributor.username }} made their first contribution
+        {%- if contributor.pr_number %} in \
+            [#{{ contributor.pr_number }}]({{ self::remote_url() }}/pull/{{ contributor.pr_number }}) \
+        {%- endif %}
+    {%- endfor %}
+{% endif %}
+
 """
 # template for the changelog footer
 footer = """
