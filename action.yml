@@ -12,7 +12,6 @@ inputs:
       Version of the Rainmeter rmskin package.
       Defaults to last 8 digits of SHA from commit or reference tags.
     required: false
-    default: 'auto'
   title:
     description: >-
       Name of the Rainmeter rmskin package.
@@ -78,7 +77,7 @@ runs:
       run: >-
         ${GITHUB_ACTION_PATH%/}/bin/rmskin-build
         --path "${{ inputs.path }}"
-        --version "${{ inputs.version }}"
+        ${{ inputs.version && '--version ' || '' }}${{ inputs.version }}
         --author "${{ inputs.author }}"
         --title "${{ inputs.title }}"
         --dir_out "${{ inputs.dir-out || inputs.dir_out }}"
