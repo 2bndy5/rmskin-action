@@ -57,23 +57,28 @@ outputs:
 runs:
     using: 'composite'
     steps:
-      - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@v6
-      - name: Normalize action path
-        shell: pwsh
-        id: pre
-        run: |-
-          $action_path = $env:GITHUB_ACTION_PATH.TrimEnd('/', '\')
-          echo "action_path=$action_path" >> $env:GITHUB_OUTPUT
-      - name: Run rmskin-builder
-        shell: pwsh
-        id: rmskin-builder
-        run: >-
-          uvx
-          --constraints ${{ steps.pre.outputs.action_path }}/action-requirements.txt
-          rmskin-builder
-          --path "${{ inputs.path }}"
-          --version "${{ inputs.version }}"
-          --author "${{ inputs.author }}"
-          --title "${{ inputs.title }}"
-          --dir_out "${{ inputs.dir_out }}"
+    - name: Create temp bin directory
+      # this path will be used to store the binaries outside of workspace root
+      shell: bash
+      run: mkdir "${GITHUB_ACTION_PATH%/}/bin"
+    - name: Install cargo-binstall
+      uses: cargo-bins/cargo-binstall@main
+    - name: Install rmskin-builder binary
+      shell: bash
+      env:
+        STANDALONE_BIN_VER: '1.2.0'
+        GITHUB_TOKEN: ${{ github.token }}
+      run: >-
+        cargo-binstall -y
+        rmskin-builder@${STANDALONE_BIN_VER}
+        --install-path "${GITHUB_ACTION_PATH%/}/bin"
+    - name: Run rmskin-builder
+      shell: bash
+      id: rmskin-builder
+      run: >-
+        ${GITHUB_ACTION_PATH%/}/bin/rmskin-build
+        --path "${{ inputs.path }}"
+        --version "${{ inputs.version }}"
+        --author "${{ inputs.author }}"
+        --title "${{ inputs.title }}"
+        --dir_out "${{ inputs.dir-out || inputs.dir_out }}"

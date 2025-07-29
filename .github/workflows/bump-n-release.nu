@@ -51,18 +51,12 @@ def bump-version [
     )
     print $"bumped ($result | get old) to ($result | get new)"
     # update the version in various places
-    # (
-    #     open action.yml --raw
-    #     | str replace $"STANDALONE_BIN_VER: '($result | get old)'" $"STANDALONE_BIN_VER: '($result | get new)'"
-    #     | save --force action.yml
-    # )
-    # print "Updated action.yml"
     (
-        open action-requirements.txt --raw
-        | str replace $"rmskin-builder==($result | get old)" $"rmskin-builder==($result | get new)"
-        | save --force action-requirements.txt
+        open action.yml --raw
+        | str replace $"STANDALONE_BIN_VER: '($result | get old)'" $"STANDALONE_BIN_VER: '($result | get new)'"
+        | save --force action.yml
     )
-    print "Updated action-requirements.txt"
+    print "Updated action.yml"
     (
         open README.md
         | str replace $"rmskin-action@v($result | get old)" $"rmskin-action@v($result | get new)"
