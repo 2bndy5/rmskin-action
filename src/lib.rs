@@ -21,7 +21,9 @@ pub use error::{ArchiveError, IniError, RmSkinBuildError};
 
 mod logger;
 
+#[cfg(any(feature = "py-binding", feature = "bin"))]
 const DEBUG_ENV_TOGGLE: &str = "ACTIONS_STEP_DEBUG";
+
 const GH_OUT_VAR_NAME: &str = "arc-name";
 
 /// Helper function used in the `rmskin-build` binary executable.
