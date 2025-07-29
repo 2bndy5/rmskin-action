@@ -11,6 +11,7 @@ This project uses the following tools for development:
 - [cargo-llvm-cov] for measuring code coverage.
 - [cargo-nextest] as a testing harness.
 - [nur] for running common tasks in the development workflow.
+- [uv] for managing python virtual environments and dependencies.
 
 ### Optional tools
 
@@ -21,6 +22,7 @@ This project uses the following tools for development:
 [cargo-llvm-cov]: https://crates.io/crates/cargo-llvm-cov
 [cargo-nextest]: https://crates.io/crates/cargo-nextest
 [nur]: https://crates.io/crates/nur
+[uv]: https://docs.astral.sh/uv
 [committed]: https://crates.io/crates/committed
 [conventional commit]: https://www.conventionalcommits.org
 [git-cliff]: https://crates.io/crates/git-cliff
@@ -37,8 +39,6 @@ Upon merging the Pull Request, all commits on the feature branch are squashed in
 This is done so [git-cliff] can adequately generate a list of changes when processing a release.
 
 ## Code style
-
-[uv]: https://docs.astral.sh/uv
 
 This project's CI leverages [pre-commit] to ensure
 
