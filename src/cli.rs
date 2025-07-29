@@ -37,8 +37,7 @@ pub enum CliError {
 /// - `@Vault/` (optional): A resources folder accessible by all installed skins.
 ///   the generated rmskin file.
 ///
-/// If none of the optional folders are present, then an error will be thrown.
-/// Typically, the `Skins/` folder should be populated.
+/// If the RMSKIN.ini file or Skins/ folder are not present, then an error will be thrown.
 ///
 /// ### Repository template
 ///
@@ -52,7 +51,10 @@ pub enum CliError {
 )]
 #[cfg_attr(feature = "py-binding", pyclass(module = "rmskin_builder"))]
 pub struct CliArgs {
-    /// The path to the git repository containing the Rainmeter project.
+    /// The path pointing to the Rainmeter project.
+    ///
+    /// This path shall contain the RMSKIN.ini and Skins folder.
+    /// This defaults to the current working directory.
     #[cfg_attr(feature = "clap", arg(short, long, default_value = "./"))]
     pub path: Option<PathBuf>,
 
@@ -79,7 +81,7 @@ pub struct CliArgs {
     #[cfg_attr(feature = "clap", arg(short, long, verbatim_doc_comment))]
     title: Option<String>,
 
-    /// The directory to package into an rmskin file.
+    /// The directory to which the resulting rmskin file is stored.
     ///
     /// This defaults to the current working directory.
     #[cfg_attr(
