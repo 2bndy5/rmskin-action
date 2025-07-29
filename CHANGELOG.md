@@ -6,6 +6,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 <!-- markdownlint-disable MD024 -->
 
+## [2.0.0] - 2025-07-29
+
+### <!-- 1 --> 🚀 Added
+
+- Switch to `uv` by @2bndy5 in [#10](https://github.com/2bndy5/rmskin-action/pull/10)
+- Ported to rust by @2bndy5 in [#11](https://github.com/2bndy5/rmskin-action/pull/11)
+
+### <!-- 4 --> 🛠️ Fixed
+
+- Fix upload to test-pypi by @2bndy5 in [`dc59a8d`](https://github.com/2bndy5/rmskin-action/commit/dc59a8dcfc8f9aaa94eb7e099a34fee11ad0a52b)
+
+### <!-- 6 --> 📦 Dependency updates
+
+- Bump actions/setup-python from 4 to 5 by @dependabot[bot] in [#6](https://github.com/2bndy5/rmskin-action/pull/6)
+- Bump actions/cache from 3 to 4 by @dependabot[bot] in [#7](https://github.com/2bndy5/rmskin-action/pull/7)
+- Bump codecov/codecov-action from 3 to 5 by @dependabot[bot] in [#9](https://github.com/2bndy5/rmskin-action/pull/9)
+
+### <!-- 9 --> 🗨️ Changed
+
+- Setuptools_scm uses git full history for packaging by @2bndy5 in [`6b222cc`](https://github.com/2bndy5/rmskin-action/commit/6b222cc561ab8647ab5ddbf154dccdb4d408b415)
+- Try fixing cache path in CI by @2bndy5 in [`2cb6873`](https://github.com/2bndy5/rmskin-action/commit/2cb6873dcbd97c755a1ff9090321f7f9fa0f2cfd)
+- Ci fixes by @2bndy5 in [#5](https://github.com/2bndy5/rmskin-action/pull/5)
+- [pyproject.toml] fix pypi project links by @2bndy5 in [`342a85a`](https://github.com/2bndy5/rmskin-action/commit/342a85ae6b01eeaa47352f317ffd47ebeb0913cc)
+- Deploy package from Linux runner by @2bndy5 in [`4ef3930`](https://github.com/2bndy5/rmskin-action/commit/4ef3930b06d6291f07d04f1c3e2617d20143581b)
+- Grant necessary permission by @2bndy5 in [`3ddff0f`](https://github.com/2bndy5/rmskin-action/commit/3ddff0fc366031d148215113da55e6b20ee4cfb5)
+- Tweak release deployment params by @2bndy5 in [`783ac9b`](https://github.com/2bndy5/rmskin-action/commit/783ac9b27d4fb887f1236c58ffab31b805bde59b)
+
+[2.0.0]: https://github.com/2bndy5/rmskin-action/compare/v1.2.0...v2.0.0
+
+Full commit diff: [`v1.2.0...v2.0.0`][2.0.0]
+
 ## [1.2.0] - 2023-09-29
 
 ### <!-- 1 --> 🚀 Added
