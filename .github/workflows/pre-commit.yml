@@ -1,0 +1,56 @@
+name: pre-commit
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  all-files:
+    # also lints python files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v6
+        id: setup-uv
+        with:
+          enable-cache: true
+      - name: Cache pre-commit environments
+        uses: actions/cache@v4
+        with:
+          path: '~/.cache/pre-commit'
+          key: pre-commit-${{ steps.setup-uv.outputs.uv-version }}-${{ hashFiles('.pre-commit-config.yaml') }}
+      - run: uvx pre-commit run --show-diff-on-failure --color=always --all-files
+
+  lint-rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache deps
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo
+          key: cargo-lint-${{ hashFiles('Cargo.lock') }}
+      - name: Setup Rust
+        run: rustup update --no-self-update
+      - run: cargo clippy
+      - run: cargo fmt --check
+
+  conventional-commit:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup update --no-self-update
+      - name: Install cargo-binstall
+        uses: cargo-bins/cargo-binstall@main
+      - name: Install committed
+        run: cargo binstall -y committed
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check PR title
+        run: >-
+          echo "${{ github.event.pull_request.title }}"
+          | committed --config .config/committed.toml --commit-file -

@@ -1,0 +1,22 @@
+# required minimum nextest version
+nextest-version = "0.9.77"
+
+[profile.default]
+# A profile to run most tests, except tests that run longer than 10 seconds
+default-filter = "all()"
+
+# This will flag any test that runs longer than 10 seconds. Useful when writing new tests.
+slow-timeout = "10s"
+
+[profile.ci]
+# A profile to run only tests that use clang-tidy and/or clang-format
+# NOTE: This profile is intended to keep CI runtime low. Locally, use default or all profiles
+
+# This is all tests in tests/ folder + unit test for --extra-args.
+default-filter = "all()"
+
+# show which tests were skipped
+status-level = "skip"
+
+# show log output from each test
+failure-output = "immediate-final"

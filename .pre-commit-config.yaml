@@ -23,4 +23,7 @@ repos:
     rev: v1.17.0
     hooks:
       - id: mypy
-        additional_dependencies: ['types-Pillow']
+  - repo: https://github.com/streetsidesoftware/cspell-cli
+    rev: v9.1.1
+    hooks:
+      - id: cspell

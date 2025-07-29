@@ -8,51 +8,76 @@ branding:
 
 inputs:
   version:
-    description: "Version of the Rainmeter rmskin package. Defaults to last 8 digits of SHA from commit or reference tags."
+    description: >-
+      Version of the Rainmeter rmskin package.
+      Defaults to last 8 digits of SHA from commit or reference tags.
     required: false
-    default: 'auto'
   title:
-    description: "Name of the Rainmeter rmskin package. Defaults name of repository."
+    description: >-
+      Name of the Rainmeter rmskin package.
+      Defaults name of repository.
     required: false
     default: ${{ github.event.repository.name }}
   author:
-    description: "Account Username maintaining the rmskin package. Defaults to Username that triggered the commit."
+    description: >-
+      Account Username maintaining the rmskin package.
+      Defaults to Username that triggered the commit.
     required: false
     default: ${{ github.repository_owner }}
   path:
-    description: "Base directory of repo being packaged. Defaults to workflow's workspace path"
+    description: >-
+      Base directory of repo being packaged.
+      Defaults to current working directory path.
     required: false
     default: "."
   dir_out:
-    description: "Path to save generated rmskin package. Defaults to workflow's workspace path"
+    deprecationMessage: DEPRECATED. Use `dir-out` instead.
+    description: >-
+      Path to save generated rmskin package.
+      Defaults to current working directory path.
     required: false
     default: "."
+  dir-out:
+    description: >-
+      Path to save generated rmskin package.
+      Defaults to current working directory path.
+    required: false
+    # default: "." # TODO: Uncomment when deprecated alias is removed
 
 outputs:
-  arc_name: # path to & name of archive file that was generated
-    description: "name of rmskin file"
-    value: ${{ steps.rmskin-builder.outputs.arc_name }}
+  arc_name:
+    # deprecationMessage: DEPRECATED. Use `arc-name` instead.
+    description: The path to & name of the .rmskin file that was generated.
+    value: ${{ steps.rmskin-builder.outputs.arc-name }}
+  arc-name:
+    description: The path to & name of the .rmskin file that was generated.
+    value: ${{ steps.rmskin-builder.outputs.arc-name }}
 
 runs:
     using: 'composite'
     steps:
-      - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@v6
-      - name: Normalize action path
-        shell: pwsh
-        id: pre
-        run: |-
-          $action_path = $env:GITHUB_ACTION_PATH.TrimEnd('/', '\')
-          echo "action_path=$action_path" >> $env:GITHUB_OUTPUT
-      - name: Run rmskin-builder
-        shell: pwsh
-        id: rmskin-builder
-        run: >-
-          uvx
-          --constraints ${{ steps.pre.outputs.action_path }}/action-requirements.txt
-          rmskin-builder
-          --path "${{ inputs.path }}"
-          --version "${{ inputs.version }}"
-          --author "${{ inputs.author }}"
-          --title "${{ inputs.title }}"
-          --dir_out "${{ inputs.dir_out }}"
+    - name: Create temp bin directory
+      # this path will be used to store the binaries outside of workspace root
+      shell: bash
+      run: mkdir "${GITHUB_ACTION_PATH%/}/bin"
+    - name: Install cargo-binstall
+      uses: cargo-bins/cargo-binstall@main
+    - name: Install rmskin-builder binary
+      shell: bash
+      env:
+        STANDALONE_BIN_VER: '1.2.0'
+        GITHUB_TOKEN: ${{ github.token }}
+      run: >-
+        cargo-binstall -y
+        rmskin-builder@${STANDALONE_BIN_VER}
+        --install-path "${GITHUB_ACTION_PATH%/}/bin"
+    - name: Run rmskin-builder
+      shell: bash
+      id: rmskin-builder
+      run: >-
+        ${GITHUB_ACTION_PATH%/}/bin/rmskin-build
+        --path "${{ inputs.path }}"
+        ${{ inputs.version && '--version ' || '' }}${{ inputs.version }}
+        --author "${{ inputs.author }}"
+        --title "${{ inputs.title }}"
+        --dir_out "${{ inputs.dir-out || inputs.dir_out }}"
