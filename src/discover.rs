@@ -109,7 +109,7 @@ pub fn discover_components<P: AsRef<Path>>(path: P) -> Result<HasComponents, std
                     log::info!("Found header image file");
                     components.rm_skin_bmp = true;
                 }
-                _ => log::debug!("Skipping directory, {name}"),
+                _ => log::debug!("Skipping {name}"),
             }
         }
     }
