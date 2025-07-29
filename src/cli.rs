@@ -118,7 +118,7 @@ impl CliArgs {
                 Ok(String::from_utf8(result.stdout.trim_ascii().to_vec())?)
             } else {
                 let result = Command::new("git")
-                    .args(["-1", "--format=\"%h\""])
+                    .args(["log", "-1", "--format=\"%h\""])
                     .output()?;
                 Ok(String::from_utf8(result.stdout.trim_ascii().to_vec())?)
             }
