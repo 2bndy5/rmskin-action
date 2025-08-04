@@ -30,7 +30,7 @@ crate-type = ["lib", "cdylib"]
 
 [dependencies]
 anyhow = { version = "1.0.98", optional = true }
-clap = { version = "4.5.41", features = ["derive"], optional = true }
+clap = { version = "4.5.42", features = ["derive"], optional = true }
 colored = { version = "3.0.0", optional = true }
 image = { version = "0.25.6", default-features = false, features = ["bmp"] }
 log = "0.4.27"
