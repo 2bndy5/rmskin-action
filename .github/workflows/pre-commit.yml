@@ -11,7 +11,7 @@ jobs:
     # also lints python files
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v6
         id: setup-uv
@@ -27,7 +27,7 @@ jobs:
   lint-rust:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Cache deps
         uses: actions/cache@v4
         with:
@@ -42,7 +42,7 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: rustup update --no-self-update
       - name: Install cargo-binstall
         uses: cargo-bins/cargo-binstall@main
