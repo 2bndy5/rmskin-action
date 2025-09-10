@@ -37,9 +37,9 @@ log = "0.4.28"
 pyo3 = { version = "0.25.1", features = ["extension-module", "abi3-py39"], optional = true }
 pyo3-log = { version = "0.12.4", optional = true }
 rust-ini = "0.21.3"
-tempfile = "3.21.0"
+tempfile = "3.22.0"
 thiserror = "2.0.16"
-zip = { version = "5.0.0", default-features = false, features = ["deflate"] }
+zip = { version = "5.0.1", default-features = false, features = ["deflate"] }
 
 [dev-dependencies]
 
