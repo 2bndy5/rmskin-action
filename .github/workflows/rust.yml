@@ -8,7 +8,8 @@ on:
     branches: [main]
     paths:
       - '**/*.rs'
-      - Cargo.{toml,lock}
+      - Cargo.toml
+      - Cargo.lock
       - tests/demo_project/**
       - .github/workflows/rust.yml
     tags:
@@ -17,7 +18,8 @@ on:
     branches: [main]
     paths:
       - '**/*.rs'
-      - Cargo.{toml,lock}
+      - Cargo.toml
+      - Cargo.lock
       - tests/demo_project/**
       - .github/workflows/rust.yml
 
