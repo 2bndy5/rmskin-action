@@ -4,65 +4,78 @@ name: Bump-n-Release
 
 on:
   push:
-    branches:
-      - "main"
+    branches: [main]
   pull_request:
-    branches:
-      - "main"
+    branches: [main]
   workflow_dispatch:
     inputs:
       component:
-        description: The version component to increase
+        description: The version component to increment
         type: choice
-        required: true
+        required: false
         default: patch
         options:
           - major
           - minor
           - patch
 
+permissions: {}
+
 jobs:
   bump-release:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           token: ${{ secrets.BUMP_N_RELEASE }}
           fetch-depth: 0
           fetch-tags: true
+          persist-credentials: false
 
       - name: Setup nushell
-        uses: hustcer/setup-nu@v3
+        uses: hustcer/setup-nu@985d59ec83ae3e3418f9d36471cda38b9d8b9879 # v3.20.0
         with:
-          version: "*"
+          version: ${{ vars.NUSHELL_VERSION || '*'}}
 
-      - uses: cargo-bins/cargo-binstall@main
-      - run: cargo binstall -y git-cliff cargo-edit
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: >-
+          cargo install cargo-edit
+          --locked
+          --no-default-features
+          --features set-version
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@557e51de59eb14aaaba2ed9621916900a91d50c6 # v6.6.1
 
       - name: Bump ${{ inputs.component }} version
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.BUMP_N_RELEASE }}
+          GITHUB_REPO: ${{ github.repository }}
+          GIT_CLIFF_CONFIG: .config/cliff.toml
+          INPUTS_COMPONENT: ${{ inputs.component }}
         run: nu .github/workflows/bump-n-release.nu ${{ inputs.component }}
 
   unreleased-notes:
     if: github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
           fetch-tags: true
+          persist-credentials: false
       - name: Generate a changelog
-        uses: orhun/git-cliff-action@v4
-        id: git-cliff
-        with:
-          config: .config/cliff.toml
-          args: --unreleased
+        shell: bash
         env:
-          OUTPUT: ${{ runner.temp }}/changes.md
           GITHUB_REPO: ${{ github.repository }}
-      - run: cat "${{ runner.temp }}/changes.md" >> "$GITHUB_STEP_SUMMARY"
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          pipx run git-cliff
+          --config .config/cliff.toml
+          --unreleased
+          --strip header
+          --output "${GITHUB_STEP_SUMMARY}"

@@ -7,8 +7,8 @@
 #
 # 2. Updates the CHANGELOG.md
 #
-#    Requires `git-cliff` (see https://git-cliff.org) to be installed
-#    to regenerate the change logs from git history.
+#    Requires `uv` installed to install/run `git-cliff` (see https://git-cliff.org).
+#    `git-cliff` is used to regenerate the change logs from git history.
 #
 #    NOTE: `git cliff` uses GITHUB_TOKEN env var to access GitHub's REST API for
 #    fetching certain data (like PR labels and commit author's username).
@@ -29,7 +29,28 @@
 #    Locally, you can use `gh login` to interactively authenticate the user account.
 
 
-let IN_CI = $env | get --optional CI | default "false" | ($in == "true") or ($in == true)
+# Run an external command and output its elapsed time.
+#
+# Not useful if you need to capture the command's output.
+export def --wrapped run-cmd [...cmd: string] {
+    let app = if (
+        ($cmd | first) == "git"
+        or ($cmd | first) == "gh"
+    ) {
+        ($cmd | first 2) | str join " "
+    } else if ($cmd | first) == 'uvx' {
+        $cmd | skip 1 | first
+    } else {
+        ($cmd | first)
+    }
+    print $"(ansi blue)\nRunning(ansi reset) ($cmd | str join ' ')"
+    let elapsed = timeit {|| ^($cmd | first) ...($cmd | skip 1)}
+    print $"(ansi magenta)($app) took ($elapsed)(ansi reset)"
+}
+
+def is-in-ci [] {
+    $env | get --optional CI | default "false" | ($in == "true") or ($in == true)
+}
 
 # Bump the version per the given component name (major, minor, patch)
 #
@@ -39,7 +60,7 @@ def bump-version [
     component: string # the version component to bump
 ] {
     mut args = [--bump $component]
-    if (not $IN_CI) {
+    if not (is-in-ci) {
         $args = $args | append "--dry-run"
     }
     let result = (
@@ -84,7 +105,7 @@ def gen-changes [
         $args = $args | append [--output, $out_path]
         {out_path: $out_path, log_prefix: "Updated"}
     }
-    ^git-cliff ...$args
+    run-cmd uvx git-cliff ...$args
     print ($prompt | format pattern "{log_prefix} {out_path}")
 }
 
@@ -101,12 +122,12 @@ def mv-rolling-tags [
     for t in [$major_tag, $minor_tag] {
         if ($t in $tags) {
             # delete local tag
-            git tag -d $t
+            run-cmd git tag -d $t
             # delete remote tags
-            git push origin $":refs/tags/($t)"
+            run-cmd git push origin $":refs/tags/($t)"
         }
-        git tag $t
-        git push origin $t
+        run-cmd git tag $t
+        run-cmd git push origin $t
         print $"Adjusted tags ($t)"
     }
 }
@@ -122,20 +143,6 @@ def is-on-main [] {
         | str trim
     ) == "main"
     $branch
-}
-
-# Publish this package to crates.io
-#
-# This requires a token in $env.CARGO_REGISTRY_TOKEN for authentication.
-def deploy-crate [] {
-    ^cargo publish
-}
-
-# Publish a GitHub Release for the given tag.
-#
-# This requires a token in $env.GITHUB_TOKEN for authentication.
-def gh-release [tag: string] {
-    ^gh release create $tag --notes-file ".config/ReleaseNotes.md"
 }
 
 # The main function of this script.
@@ -157,17 +164,17 @@ def main [component: string] {
     if not $is_main {
         print $"(ansi yellow)Not checked out on default branch!(ansi reset)"
     }
-    if $IN_CI and $is_main {
-        git config --global user.name $"($env.GITHUB_ACTOR)"
-        git config --global user.email $"($env.GITHUB_ACTOR_ID)+($env.GITHUB_ACTOR)@users.noreply.github.com"
-        git add --all
-        git commit -m $"build: bump version to ($tag)"
-        git push
+    if (is-in-ci) and $is_main {
+        run-cmd git config --global user.name $"($env.GITHUB_ACTOR)"
+        run-cmd git config --global user.email $"($env.GITHUB_ACTOR_ID)+($env.GITHUB_ACTOR)@users.noreply.github.com"
+        run-cmd git add --all
+        run-cmd git commit -m $"build: bump version to ($tag)"
+        run-cmd git push
         mv-rolling-tags $ver
         print "Publishing crate"
-        deploy-crate
+        run-cmd cargo publish
         print $"Deploying ($tag)"
-        gh-release $tag
+        run-cmd gh release create $tag --notes-file ".config/ReleaseNotes.md"
     } else if $is_main {
         print $"(ansi yellow)Not deploying from local clone.(ansi reset)"
     }
