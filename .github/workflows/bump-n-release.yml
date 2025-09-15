@@ -13,7 +13,6 @@ on:
         description: The version component to increment
         type: choice
         required: false
-        default: patch
         options:
           - major
           - minor
