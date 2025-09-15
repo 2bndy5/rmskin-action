@@ -52,25 +52,46 @@ def is-in-ci [] {
     $env | get --optional CI | default "false" | ($in == "true") or ($in == true)
 }
 
+const GIT_CLIFF_CONFIG = [--config .config/cliff.toml]
+
 # Bump the version per the given component name (major, minor, patch)
 #
 # This function also updates known occurrences of the old version spec to
 # the new version spec in various places (like README.md and action.yml).
 def bump-version [
-    component: string # the version component to bump
+    component?: string # the version component to bump
     --dry-run
 ] {
-    mut args = [--bump $component]
+    mut args = if ($component | is-empty) {
+        let ver = (
+            (^uvx git-cliff ...$GIT_CLIFF_CONFIG --bumped-version)
+            | str trim
+            | str trim --left --char "v"
+        )
+        let old = open "Cargo.toml" | get "package" | "version"
+        print $"git-cliff predicts the next version to be ($ver)"
+        [$ver]
+    } else {
+        [--bump $component]
+    }
     if $dry_run {
         $args = $args | append "--dry-run"
     }
-    let result = (
-        cargo set-version ...$args e>| lines
-        | first
-        | str trim
-        | parse "Upgrading {pkg} from {old} to {new}"
-        | first
-    )
+    let output = (^cargo set-version ...$args) | complete
+    let result = if (($output | get exit_code) == 0) {
+        (
+            $output
+            | get stderr
+            | lines
+            | each { $in | str trim }
+            | where { $in | str starts-with "Upgrading "}
+            | first
+            | parse "Upgrading {pkg} from {old} to {new}"
+            | first
+        )
+    } else {
+        error make {msg: ($output | get stderr)}
+    }
     print $"bumped ($result | get old) to ($result | get new)"
     if not $dry_run {
         # update the version in various places
@@ -161,10 +182,11 @@ def is-on-main [] {
 # - manor
 # - minor
 # - patch
-export def main [component: string] {
-    let is_ci = is-in-ci
+export def main [
+    component?: string, # If not provided, git-cliff will guess the next version based on unreleased history.
+] {
     let is_main = is-on-main
-    let ver = if ($is_ci or not $is_main) {
+    let ver = if not $is_main {
         bump-version $component --dry-run
     } else {
         bump-version $component
@@ -177,12 +199,14 @@ export def main [component: string] {
         gen-changes $tag
         gen-changes $tag --unreleased
     }
+    let is_ci = is-in-ci
     if not $is_main {
         let prompt = "Not checked out on default branch!"
         if ($is_ci) {
-            error make {msg: $"::error::($prompt)"}
+            print $"::error::($prompt)"
+        } else {
+            print $"(ansi yellow)($prompt)(ansi reset)"
         }
-        print $"(ansi yellow)($prompt)(ansi reset)"
         exit 1
     }
     if ($is_ci) {
@@ -199,5 +223,5 @@ export def main [component: string] {
     run-cmd cargo publish
 
     print $"Deploying ($tag)"
-    run-cmd gh release create $tag --notes-file ".config/ReleaseNotes.md"
+    run-cmd gh release create $tag --notes-file $RELEASE_NOTES
 }
