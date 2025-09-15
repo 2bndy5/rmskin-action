@@ -8,23 +8,23 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     groups:
       actions:
         patterns:
           - "*"
-  - package-ecosystem: uv
+  - package-ecosystem: pip
     directory: /
     schedule:
-      interval: "weekly"
+      interval: "quarterly"
     groups:
-      uv-pip:
+      pip:
         patterns:
           - "*"
   - package-ecosystem: cargo
     directory: /
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     groups:
       cargo:
         patterns:

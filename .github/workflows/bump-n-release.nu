@@ -3,12 +3,12 @@
 #
 # 1. Bump version number in Cargo.toml manifest.
 #
-#    This step requires `cargo-edit` installed.
+#    This step requires `cargo-edit` (specifically `set-version` feature) installed.
 #
 # 2. Updates the CHANGELOG.md
 #
-#    Requires `git-cliff` (see https://git-cliff.org) to be installed
-#    to regenerate the change logs from git history.
+#    Requires `uv` installed to install/run `git-cliff` (see https://git-cliff.org).
+#    `git-cliff` is used to regenerate the change logs from git history.
 #
 #    NOTE: `git cliff` uses GITHUB_TOKEN env var to access GitHub's REST API for
 #    fetching certain data (like PR labels and commit author's username).
@@ -29,69 +29,113 @@
 #    Locally, you can use `gh login` to interactively authenticate the user account.
 
 
-let IN_CI = $env | get --optional CI | default "false" | ($in == "true") or ($in == true)
+# Run an external command and output its elapsed time.
+#
+# Not useful if you need to capture the command's output.
+export def --wrapped run-cmd [...cmd: string] {
+    let app = if (
+        ($cmd | first) == "git"
+        or ($cmd | first) == "gh"
+    ) {
+        ($cmd | first 2) | str join " "
+    } else if ($cmd | first) == 'uvx' {
+        $cmd | skip 1 | first
+    } else {
+        ($cmd | first)
+    }
+    print $"(ansi blue)\nRunning(ansi reset) ($cmd | str join ' ')"
+    let elapsed = timeit {|| ^($cmd | first) ...($cmd | skip 1)}
+    print $"(ansi magenta)($app) took ($elapsed)(ansi reset)"
+}
 
-# Bump the version per the given component name (major, minor, patch)
+const GIT_CLIFF_CONFIG = [--config .config/cliff.toml]
+
+# Bump the version.
 #
 # This function also updates known occurrences of the old version spec to
 # the new version spec in various places (like README.md and action.yml).
-def bump-version [
-    component: string # the version component to bump
+export def bump-version [
+    component?: string # The version component (major, minor, patch) to bump. If not given, `git-cliff` will guess the next version based on unreleased git history.
+    --dry-run, # Prevent this function from making changes to disk/files.
 ] {
-    mut args = [--bump $component]
-    if (not $IN_CI) {
+    mut args = if ($component | is-empty) {
+        let ver = (
+            (^uvx git-cliff ...$GIT_CLIFF_CONFIG --bumped-version)
+            | str trim
+            | str trim --left --char "v"
+        )
+        let old = open "Cargo.toml" | get "package" | "version"
+        print $"git-cliff predicts the next version to be ($ver)"
+        [$ver]
+    } else {
+        [--bump $component]
+    }
+    if $dry_run {
         $args = $args | append "--dry-run"
     }
-    let result = (
-        cargo set-version ...$args e>| lines
-        | first
-        | str trim
-        | parse "Upgrading {pkg} from {old} to {new}"
-        | first
-    )
+    let output = (^cargo set-version ...$args) | complete
+    let result = if (($output | get exit_code) == 0) {
+        (
+            $output
+            | get stderr
+            | lines
+            | each { $in | str trim }
+            | where { $in | str starts-with "Upgrading "}
+            | first
+            | parse "Upgrading {pkg} from {old} to {new}"
+            | first
+        )
+    } else {
+        error make {msg: ($output | get stderr)}
+    }
     print $"bumped ($result | get old) to ($result | get new)"
-    # update the version in various places
-    (
-        open action.yml --raw
-        | str replace $"STANDALONE_BIN_VER: '($result | get old)'" $"STANDALONE_BIN_VER: '($result | get new)'"
-        | save --force action.yml
-    )
-    print "Updated action.yml"
-    (
-        open README.md
-        | str replace $"rmskin-action@v($result | get old)" $"rmskin-action@v($result | get new)"
-        | save --force README.md
-    )
-    print "Updated README.md"
+    if not $dry_run {
+        # update the version in various places
+        (
+            open action.yml --raw
+            | str replace $"STANDALONE_BIN_VER: '($result | get old)'" $"STANDALONE_BIN_VER: '($result | get new)'"
+            | save --force action.yml
+        )
+        print "Updated action.yml"
+        (
+            open README.md
+            | str replace $"rmskin-action@v($result | get old)" $"rmskin-action@v($result | get new)"
+            | save --force README.md
+        )
+        print "Updated README.md"
+    }
     $result | get new
 }
 
+export const RELEASE_NOTES = $nu.temp-path | path join "ReleaseNotes.md"
+const CHANGELOG = "CHANGELOG.md"
+
 # Use `git-cliff` tp generate changes.
 #
-# If `--unreleased` is asserted, then the `git-cliff` output will be saved to .config/ReleaseNotes.md.
+# If `--unreleased` is asserted, then the `git-cliff` output will be saved to `$RELEASE_NOTES`.
 # Otherwise, the generated changes will span the entire git history and be saved to CHANGELOG.md.
-def gen-changes [
+export def gen-changes [
     tag: string, # the new version tag to use for unreleased changes.
     --unreleased, # only generate changes from unreleased version.
 ] {
-    mut args = [--tag, $tag, --config, .config/cliff.toml]
+    mut args = $GIT_CLIFF_CONFIG | append [--tag, $tag]
     let prompt = if $unreleased {
-        let out_path = ".config/ReleaseNotes.md"
+        let out_path = $RELEASE_NOTES
         $args = $args | append [--strip, header, --unreleased, --output, $out_path]
         {out_path: $out_path, log_prefix: "Generated"}
     } else {
-        let out_path = "CHANGELOG.md"
+        let out_path = $CHANGELOG
         $args = $args | append [--output, $out_path]
         {out_path: $out_path, log_prefix: "Updated"}
     }
-    ^git-cliff ...$args
+    run-cmd uvx git-cliff ...$args
     print ($prompt | format pattern "{log_prefix} {out_path}")
 }
 
 # Move applicable rolling tags to the checked out HEAD.
 #
 # For example, `v1` and `v1.2` are moved to the newer `v1.2.3` ref.
-def mv-rolling-tags [
+export def mv-rolling-tags [
     ver: string # The fully qualified version of the new tag (without `v` prefixed).
 ] {
     let tags = ^git tag --list | lines
@@ -101,18 +145,18 @@ def mv-rolling-tags [
     for t in [$major_tag, $minor_tag] {
         if ($t in $tags) {
             # delete local tag
-            git tag -d $t
+            run-cmd git tag -d $t
             # delete remote tags
-            git push origin $":refs/tags/($t)"
+            run-cmd git push origin $":refs/tags/($t)"
         }
-        git tag $t
-        git push origin $t
+        run-cmd git tag $t
+        run-cmd git push origin $t
         print $"Adjusted tags ($t)"
     }
 }
 
 # Is the the default branch currently checked out?
-def is-on-main [] {
+export def is-on-main [] {
     let branch = (
         ^git branch
         | lines
@@ -124,51 +168,53 @@ def is-on-main [] {
     $branch
 }
 
-# Publish this package to crates.io
-#
-# This requires a token in $env.CARGO_REGISTRY_TOKEN for authentication.
-def deploy-crate [] {
-    ^cargo publish
-}
-
-# Publish a GitHub Release for the given tag.
-#
-# This requires a token in $env.GITHUB_TOKEN for authentication.
-def gh-release [tag: string] {
-    ^gh release create $tag --notes-file ".config/ReleaseNotes.md"
-}
-
 # The main function of this script.
 #
-# The `component` parameter is a required CLI option:
-#     nu .github/workflows/bump-n-release.nu patch
-#
-# The acceptable `component` values are what `cargo set-version` accepts:
+# The acceptable `component` values are what `cargo set-version --bump` accepts:
 #
 # - manor
 # - minor
 # - patch
-def main [component: string] {
-    let ver = bump-version $component
-    let tag = $"v($ver)"
-    gen-changes $tag
-    gen-changes $tag --unreleased
+export def main [
+    component?: string, # If not provided, `git-cliff` will guess the next version based on unreleased git history.
+] {
     let is_main = is-on-main
+    let ver = if not $is_main {
+        bump-version $component --dry-run
+    } else {
+        bump-version $component
+    }
+    let tag = $"v($ver)"
     if not $is_main {
-        print $"(ansi yellow)Not checked out on default branch!(ansi reset)"
+        gen-changes $tag --unreleased
+        open $RELEASE_NOTES | print
+    } else {
+        gen-changes $tag
+        gen-changes $tag --unreleased
     }
-    if $IN_CI and $is_main {
-        git config --global user.name $"($env.GITHUB_ACTOR)"
-        git config --global user.email $"($env.GITHUB_ACTOR_ID)+($env.GITHUB_ACTOR)@users.noreply.github.com"
-        git add --all
-        git commit -m $"build: bump version to ($tag)"
-        git push
-        mv-rolling-tags $ver
-        print "Publishing crate"
-        deploy-crate
-        print $"Deploying ($tag)"
-        gh-release $tag
-    } else if $is_main {
-        print $"(ansi yellow)Not deploying from local clone.(ansi reset)"
+    let is_ci = $env | get --optional CI | into bool --relaxed
+    if not $is_main {
+        let prompt = "Not checked out on default branch!"
+        if ($is_ci) {
+            print $"::error::($prompt)"
+        } else {
+            print $"(ansi yellow)($prompt)(ansi reset)"
+        }
+        exit 1
     }
+    if ($is_ci) {
+        run-cmd git config --global user.name $"($env.GITHUB_ACTOR)"
+        run-cmd git config --global user.email $"($env.GITHUB_ACTOR_ID)+($env.GITHUB_ACTOR)@users.noreply.github.com"
+    }
+    run-cmd git add --all
+    run-cmd git commit -m $"build: bump version to ($tag)"
+    run-cmd git push
+
+    mv-rolling-tags $ver
+
+    print "Publishing crate"
+    run-cmd cargo publish
+
+    print $"Deploying ($tag)"
+    run-cmd gh release create $tag --notes-file $RELEASE_NOTES
 }

@@ -36,6 +36,7 @@ words:
   - nushell
   - ocumentation
   - orhun
+  - pipx
   - pwsh
   - pyclass
   - pyfunction
@@ -57,6 +58,7 @@ words:
   - timeit
   - topo
   - upport
+  - zizmor
 ignorePaths:
   - .gitattributes
   - .gitignore
