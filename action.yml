@@ -65,7 +65,7 @@ runs:
     - name: Install rmskin-builder binary
       shell: bash
       env:
-        STANDALONE_BIN_VER: '2.0.0'
+        STANDALONE_BIN_VER: '2.0.1'
         GITHUB_TOKEN: ${{ github.token }}
       run: >-
         cargo-binstall -y

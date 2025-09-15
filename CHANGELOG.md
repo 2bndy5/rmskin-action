@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 <!-- markdownlint-disable MD024 -->
 
+## [2.0.1] - 2025-09-15
+
+### <!-- 1 --> 🚀 Added
+
+- Distribute future-compatible python wheels by @2bndy5 in [#19](https://github.com/2bndy5/rmskin-action/pull/19)
+
+### <!-- 6 --> 📦 Dependency updates
+
+- Bump the actions group with 2 updates by @dependabot[bot] in [#13](https://github.com/2bndy5/rmskin-action/pull/13)
+- Bump the cargo group across 1 directory with 3 updates by @dependabot[bot] in [#14](https://github.com/2bndy5/rmskin-action/pull/14)
+- Bump the cargo group with 3 updates by @dependabot[bot] in [#15](https://github.com/2bndy5/rmskin-action/pull/15)
+- Bump actions/setup-python from 5 to 6 in the actions group by @dependabot[bot] in [#16](https://github.com/2bndy5/rmskin-action/pull/16)
+- Bump the cargo group with 5 updates by @dependabot[bot] in [#18](https://github.com/2bndy5/rmskin-action/pull/18)
+- Bump zip from 5.0.1 to 5.1.1 in the cargo group by @dependabot[bot] in [#22](https://github.com/2bndy5/rmskin-action/pull/22)
+- Bump the actions group with 2 updates by @dependabot[bot] in [#23](https://github.com/2bndy5/rmskin-action/pull/23)
+
+### <!-- 9 --> 🗨️ Changed
+
+- Revise CI workflows by @2bndy5 in [#21](https://github.com/2bndy5/rmskin-action/pull/21)
+- Persist checkout credentials by @2bndy5 in [`3150c5b`](https://github.com/2bndy5/rmskin-action/commit/3150c5b8bb426cdca53e683a9d541ee3a2823bc1)
+
+[2.0.1]: https://github.com/2bndy5/rmskin-action/compare/v2.0.0...v2.0.1
+
+Full commit diff: [`v2.0.0...v2.0.1`][2.0.1]
+
 ## [2.0.0] - 2025-07-29
 
 ### <!-- 1 --> 🚀 Added
@@ -22,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump actions/setup-python from 4 to 5 by @dependabot[bot] in [#6](https://github.com/2bndy5/rmskin-action/pull/6)
 - Bump actions/cache from 3 to 4 by @dependabot[bot] in [#7](https://github.com/2bndy5/rmskin-action/pull/7)
 - Bump codecov/codecov-action from 3 to 5 by @dependabot[bot] in [#9](https://github.com/2bndy5/rmskin-action/pull/9)
+- Bump version to v2.0.0 by @2bndy5 in [`d78b37d`](https://github.com/2bndy5/rmskin-action/commit/d78b37d564379eed3d72777b9a3996644fb96423)
 
 ### <!-- 9 --> 🗨️ Changed
 
