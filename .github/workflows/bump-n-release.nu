@@ -3,7 +3,7 @@
 #
 # 1. Bump version number in Cargo.toml manifest.
 #
-#    This step requires `cargo-edit` installed.
+#    This step requires `cargo-edit` (specifically `set-version` feature) installed.
 #
 # 2. Updates the CHANGELOG.md
 #
@@ -48,19 +48,15 @@ export def --wrapped run-cmd [...cmd: string] {
     print $"(ansi magenta)($app) took ($elapsed)(ansi reset)"
 }
 
-def is-in-ci [] {
-    $env | get --optional CI | default "false" | ($in == "true") or ($in == true)
-}
-
 const GIT_CLIFF_CONFIG = [--config .config/cliff.toml]
 
-# Bump the version per the given component name (major, minor, patch)
+# Bump the version.
 #
 # This function also updates known occurrences of the old version spec to
 # the new version spec in various places (like README.md and action.yml).
-def bump-version [
-    component?: string # the version component to bump
-    --dry-run
+export def bump-version [
+    component?: string # The version component (major, minor, patch) to bump. If not given, `git-cliff` will guess the next version based on unreleased git history.
+    --dry-run, # Prevent this function from making changes to disk/files.
 ] {
     mut args = if ($component | is-empty) {
         let ver = (
@@ -111,18 +107,18 @@ def bump-version [
     $result | get new
 }
 
-const RELEASE_NOTES = $nu.temp-path | path join "ReleaseNotes.md"
+export const RELEASE_NOTES = $nu.temp-path | path join "ReleaseNotes.md"
 const CHANGELOG = "CHANGELOG.md"
 
 # Use `git-cliff` tp generate changes.
 #
-# If `--unreleased` is asserted, then the `git-cliff` output will be saved to .config/ReleaseNotes.md.
+# If `--unreleased` is asserted, then the `git-cliff` output will be saved to `$RELEASE_NOTES`.
 # Otherwise, the generated changes will span the entire git history and be saved to CHANGELOG.md.
-def gen-changes [
+export def gen-changes [
     tag: string, # the new version tag to use for unreleased changes.
     --unreleased, # only generate changes from unreleased version.
 ] {
-    mut args = [--tag, $tag, --config, .config/cliff.toml]
+    mut args = $GIT_CLIFF_CONFIG | append [--tag, $tag]
     let prompt = if $unreleased {
         let out_path = $RELEASE_NOTES
         $args = $args | append [--strip, header, --unreleased, --output, $out_path]
@@ -139,7 +135,7 @@ def gen-changes [
 # Move applicable rolling tags to the checked out HEAD.
 #
 # For example, `v1` and `v1.2` are moved to the newer `v1.2.3` ref.
-def mv-rolling-tags [
+export def mv-rolling-tags [
     ver: string # The fully qualified version of the new tag (without `v` prefixed).
 ] {
     let tags = ^git tag --list | lines
@@ -160,7 +156,7 @@ def mv-rolling-tags [
 }
 
 # Is the the default branch currently checked out?
-def is-on-main [] {
+export def is-on-main [] {
     let branch = (
         ^git branch
         | lines
@@ -174,16 +170,13 @@ def is-on-main [] {
 
 # The main function of this script.
 #
-# The `component` parameter is a required CLI option:
-#     nu .github/workflows/bump-n-release.nu patch
-#
-# The acceptable `component` values are what `cargo set-version` accepts:
+# The acceptable `component` values are what `cargo set-version --bump` accepts:
 #
 # - manor
 # - minor
 # - patch
 export def main [
-    component?: string, # If not provided, git-cliff will guess the next version based on unreleased history.
+    component?: string, # If not provided, `git-cliff` will guess the next version based on unreleased git history.
 ] {
     let is_main = is-on-main
     let ver = if not $is_main {
@@ -199,7 +192,7 @@ export def main [
         gen-changes $tag
         gen-changes $tag --unreleased
     }
-    let is_ci = is-in-ci
+    let is_ci = $env | get --optional CI | into bool --relaxed
     if not $is_main {
         let prompt = "Not checked out on default branch!"
         if ($is_ci) {
