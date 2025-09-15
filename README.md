@@ -1,3 +1,4 @@
+<!-- markdownlint-disable MD041 -->
 
 [![action-ci-badge]][action-ci-link]
 [![pypi-ci-badge]][pypi-ci-link]
@@ -63,9 +64,9 @@ jobs:
 
 ### Python Package
 
-Originally, this was written as a pure python executable script.
+Originally, this was written as a pure Python executable script.
 After migrating the code base to Rust,
-the python package is still maintained as an FFI binding.
+the Python package is still maintained as an FFI binding.
 
 ```shell
 pip install rmskin-builder
@@ -76,7 +77,7 @@ rmskin-builder.exe --help
 
 [cargo-binstall]: https://github.com/cargo-bins/cargo-binstall
 
-A Rust crate is published to take advantage of [cargo-binstall] for easy installing a portable binary executable.
+A Rust crate is published to take advantage of [cargo-binstall] for easily installing a portable binary executable.
 
 ```shell
 cargo binstall rmskin-builder
@@ -89,7 +90,7 @@ rmskin-build --help
 |--------|:------------|:---------|
 | `path` | Base directory of repo being packaged. Defaults to current working path. | no |
 | `dir-out` | Path to save generated rmskin package. Defaults to current working path. This can also be specified using `dir_out` for backward compatibility. | no |
-| `version` | Version of the Rainmeter rmskin package. Defaults to last 8 digits of SHA from commit or ref/tags or otherwise `x0x.y0y`. | no |
+| `version` | Version of the Rainmeter rmskin package. Defaults to last 7 digits of SHA from commit or ref/tags or otherwise `x0x.y0y`. | no |
 | `title` | Name of the Rainmeter rmskin package. Defaults to name of repository or otherwise the last directory name in the `path` option. | no |
 | `author` | Account Username maintaining the rmskin package. Defaults to Username that triggered the action or the `git config user.name`; `Unknown` when all else fails. | no |
 

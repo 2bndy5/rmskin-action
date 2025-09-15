@@ -58,9 +58,10 @@ def is-in-ci [] {
 # the new version spec in various places (like README.md and action.yml).
 def bump-version [
     component: string # the version component to bump
+    --dry-run
 ] {
     mut args = [--bump $component]
-    if not (is-in-ci) {
+    if $dry_run {
         $args = $args | append "--dry-run"
     }
     let result = (
@@ -71,21 +72,26 @@ def bump-version [
         | first
     )
     print $"bumped ($result | get old) to ($result | get new)"
-    # update the version in various places
-    (
-        open action.yml --raw
-        | str replace $"STANDALONE_BIN_VER: '($result | get old)'" $"STANDALONE_BIN_VER: '($result | get new)'"
-        | save --force action.yml
-    )
-    print "Updated action.yml"
-    (
-        open README.md
-        | str replace $"rmskin-action@v($result | get old)" $"rmskin-action@v($result | get new)"
-        | save --force README.md
-    )
-    print "Updated README.md"
+    if not $dry_run {
+        # update the version in various places
+        (
+            open action.yml --raw
+            | str replace $"STANDALONE_BIN_VER: '($result | get old)'" $"STANDALONE_BIN_VER: '($result | get new)'"
+            | save --force action.yml
+        )
+        print "Updated action.yml"
+        (
+            open README.md
+            | str replace $"rmskin-action@v($result | get old)" $"rmskin-action@v($result | get new)"
+            | save --force README.md
+        )
+        print "Updated README.md"
+    }
     $result | get new
 }
+
+const RELEASE_NOTES = $nu.temp-path | path join "ReleaseNotes.md"
+const CHANGELOG = "CHANGELOG.md"
 
 # Use `git-cliff` tp generate changes.
 #
@@ -97,11 +103,11 @@ def gen-changes [
 ] {
     mut args = [--tag, $tag, --config, .config/cliff.toml]
     let prompt = if $unreleased {
-        let out_path = ".config/ReleaseNotes.md"
+        let out_path = $RELEASE_NOTES
         $args = $args | append [--strip, header, --unreleased, --output, $out_path]
         {out_path: $out_path, log_prefix: "Generated"}
     } else {
-        let out_path = "CHANGELOG.md"
+        let out_path = $CHANGELOG
         $args = $args | append [--output, $out_path]
         {out_path: $out_path, log_prefix: "Updated"}
     }
@@ -155,27 +161,43 @@ def is-on-main [] {
 # - manor
 # - minor
 # - patch
-def main [component: string] {
-    let ver = bump-version $component
-    let tag = $"v($ver)"
-    gen-changes $tag
-    gen-changes $tag --unreleased
+export def main [component: string] {
+    let is_ci = is-in-ci
     let is_main = is-on-main
-    if not $is_main {
-        print $"(ansi yellow)Not checked out on default branch!(ansi reset)"
+    let ver = if ($is_ci or not $is_main) {
+        bump-version $component --dry-run
+    } else {
+        bump-version $component
     }
-    if (is-in-ci) and $is_main {
+    let tag = $"v($ver)"
+    if not $is_main {
+        gen-changes $tag --unreleased
+        open $RELEASE_NOTES | print
+    } else {
+        gen-changes $tag
+        gen-changes $tag --unreleased
+    }
+    if not $is_main {
+        let prompt = "Not checked out on default branch!"
+        if ($is_ci) {
+            error make {msg: $"::error::($prompt)"}
+        }
+        print $"(ansi yellow)($prompt)(ansi reset)"
+        exit 1
+    }
+    if ($is_ci) {
         run-cmd git config --global user.name $"($env.GITHUB_ACTOR)"
         run-cmd git config --global user.email $"($env.GITHUB_ACTOR_ID)+($env.GITHUB_ACTOR)@users.noreply.github.com"
-        run-cmd git add --all
-        run-cmd git commit -m $"build: bump version to ($tag)"
-        run-cmd git push
-        mv-rolling-tags $ver
-        print "Publishing crate"
-        run-cmd cargo publish
-        print $"Deploying ($tag)"
-        run-cmd gh release create $tag --notes-file ".config/ReleaseNotes.md"
-    } else if $is_main {
-        print $"(ansi yellow)Not deploying from local clone.(ansi reset)"
     }
+    run-cmd git add --all
+    run-cmd git commit -m $"build: bump version to ($tag)"
+    run-cmd git push
+
+    mv-rolling-tags $ver
+
+    print "Publishing crate"
+    run-cmd cargo publish
+
+    print $"Deploying ($tag)"
+    run-cmd gh release create $tag --notes-file ".config/ReleaseNotes.md"
 }
