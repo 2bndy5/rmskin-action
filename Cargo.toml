@@ -39,7 +39,7 @@ pyo3-log = { version = "0.12.4", optional = true }
 rust-ini = "0.21.3"
 tempfile = "3.22.0"
 thiserror = "2.0.16"
-zip = { version = "5.0.1", default-features = false, features = ["deflate"] }
+zip = { version = "5.1.1", default-features = false, features = ["deflate"] }
 
 [dev-dependencies]
 
