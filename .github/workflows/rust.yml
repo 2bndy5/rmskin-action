@@ -23,6 +23,7 @@ on:
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
+  BIN_NAME: rmskin-build
 
 permissions: {}
 
@@ -139,7 +140,7 @@ jobs:
         run: >-
           ${{ matrix.cross && 'cross' || 'cargo '}}
           build
-          --bin rmskin-build
+          --bin ${{ env.BIN_NAME }}
           --release
           --target ${{ matrix.target }}
           --features bin
@@ -148,9 +149,9 @@ jobs:
         if: runner.os != 'Windows'
         shell: bash
         run: |-
-          tgt="rmskin-build"
+          tgt="${{ env.BIN_NAME }}"
           mv "target/${{ matrix.target }}/release/${tgt}" "${tgt}"
-          arc_name="rmskin-build-${{ matrix.target }}.tar.gz"
+          arc_name="${{ env.BIN_NAME }}-${{ matrix.target }}.tar.gz"
           tar -a -c -v -z -f "${arc_name}" ${tgt} LICENSE
       - name: Prepare artifacts (windows)
         if: runner.os == 'Windows'
@@ -158,16 +159,16 @@ jobs:
         # `tar.exe` in powershell is different from `tar` in bash.
         # need to use `tar.exe` in powershell to create a valid zip file.
         run: |-
-          $tgt = "rmskin-build.exe"
+          $tgt = "${{ env.BIN_NAME }}.exe"
           mv "target/${{ matrix.target }}/release/${tgt}" "${tgt}"
-          $arc_name = "rmskin-build-${{ matrix.target }}.zip"
+          $arc_name = "${{ env.BIN_NAME }}-${{ matrix.target }}.zip"
           tar -a -c -v -f "${arc_name}" ${tgt} LICENSE
 
       - name: Upload artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: rmskin-build-${{ matrix.target }}
-          path: rmskin-build-${{ matrix.target }}*
+          name: ${{ env.BIN_NAME }}-${{ matrix.target }}
+          path: ${{ env.BIN_NAME }}-${{ matrix.target }}*
           if-no-files-found: error
 
   docs:
@@ -199,32 +200,35 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         with:
           persist-credentials: false
       - name: Install Rust
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         run: rustup update stable --no-self-update
-
       - name: Validate release assets
         if: ${{ !startsWith(github.ref, 'refs/tags') }}
         run: cargo package
 
       - name: Download built assets
-        # if: startsWith(github.ref, 'refs/tags')
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
-          pattern: rmskin-build-*
+          pattern: ${{ env.BIN_NAME }}-*
           path: dist
           merge-multiple: true
+
       - name: List release assets
         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        shell: bash
         run: |-
-          files=$(ls dist)
+          files=$(ls ./*/${{ env.BIN_NAME }}*)
           echo "${files}"
       - name: Upload release assets
         if: startsWith(github.ref, 'refs/tags')
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPO: ${{ github.repository }}
         run: |-
-          files=$(ls dist)
-          gh release upload ${GITHUB_REF_NAME} ${files}
+          files=$(ls ./*/${{ env.BIN_NAME }}*)
+          gh release upload ${GITHUB_REF_NAME} ${files} --repo "${GITHUB_REPO}"
