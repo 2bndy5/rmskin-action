@@ -34,6 +34,8 @@ jobs:
         uses: ./
         with:
           path: tests/demo_project
+        env:
+          FORCE_COLOR: 1
 
       # Use the output from the `builder` step
       - name: Print the output filename
