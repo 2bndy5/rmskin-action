@@ -19,7 +19,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6.8.0
+        uses: astral-sh/setup-uv@85856786d1ce8acfbcc2f13a5f3fbd6b938f9f41 # v7.1.2
         id: setup-uv
         with:
           enable-cache: true
@@ -61,7 +61,7 @@ jobs:
           persist-credentials: false
       - run: rustup update --no-self-update
       - name: Install cargo-binstall
-        uses: cargo-bins/cargo-binstall@38e8f5e4c386b611d51e8aa997b9a06a3c8eb67a # v1.15.6
+        uses: cargo-bins/cargo-binstall@afcf9780305558bcc9e4bc94b7589ab2bb8b6106 # v1.15.9
       - name: Install committed
         run: cargo binstall -y committed
         env:
@@ -80,7 +80,7 @@ jobs:
           PR_TITLE: "${{ steps.get-title.outputs.title }}"
           COMMITTED_CONFIG: .config/committed.toml
         run: echo "${PR_TITLE}" | committed --config "${COMMITTED_CONFIG}" --commit-file -
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
           node-version: latest
       - name: spell check
