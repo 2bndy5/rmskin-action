@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 <!-- markdownlint-disable MD024 -->
 
+## [2.0.2] - 2025-11-12
+
+### <!-- 6 --> 📦 Dependency updates
+
+- Bump the actions group with 3 updates by @dependabot[bot] in [#24](https://github.com/2bndy5/rmskin-action/pull/24)
+- Bump the cargo group with 4 updates by @dependabot[bot] in [#25](https://github.com/2bndy5/rmskin-action/pull/25)
+- Bump the actions group with 6 updates by @dependabot[bot] in [#26](https://github.com/2bndy5/rmskin-action/pull/26)
+- Bump the cargo group with 2 updates by @dependabot[bot] in [#27](https://github.com/2bndy5/rmskin-action/pull/27)
+- Bump pyo3 and pyo3-log by @2bndy5 in [#29](https://github.com/2bndy5/rmskin-action/pull/29)
+
+### <!-- 9 --> 🗨️ Changed
+
+- Fix Rust CI release artifact uploads by @2bndy5 in [`104b362`](https://github.com/2bndy5/rmskin-action/commit/104b362d7828428b571dc790d2f92c181d6e6076)
+- Use trusted publishing for cargo deployments by @2bndy5 in [#28](https://github.com/2bndy5/rmskin-action/pull/28)
+
+[2.0.2]: https://github.com/2bndy5/rmskin-action/compare/v2.0.1...v2.0.2
+
+Full commit diff: [`v2.0.1...v2.0.2`][2.0.2]
+
 ## [2.0.1] - 2025-09-15
 
 ### <!-- 1 --> 🚀 Added
@@ -21,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump the cargo group with 5 updates by @dependabot[bot] in [#18](https://github.com/2bndy5/rmskin-action/pull/18)
 - Bump zip from 5.0.1 to 5.1.1 in the cargo group by @dependabot[bot] in [#22](https://github.com/2bndy5/rmskin-action/pull/22)
 - Bump the actions group with 2 updates by @dependabot[bot] in [#23](https://github.com/2bndy5/rmskin-action/pull/23)
+- Bump version to v2.0.1 by @2bndy5 in [`856f1ee`](https://github.com/2bndy5/rmskin-action/commit/856f1ee5e9db0860c82862345a88bb8e5b40e968)
 
 ### <!-- 9 --> 🗨️ Changed
 
