@@ -193,7 +193,7 @@ jobs:
           path: target/doc/rmskin_builder
           if-no-files-found: error
 
-  release:
+  release-assets:
     runs-on: ubuntu-latest
     needs: [build, test, docs]
     permissions:
@@ -232,3 +232,26 @@ jobs:
         run: |-
           files=$(ls ./*/${{ env.BIN_NAME }}*)
           gh release upload ${GITHUB_REF_NAME} ${files} --repo "${GITHUB_REPO}"
+
+  publish:
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    needs: [build, test, docs]
+    permissions:
+      # needed for trusted publishing
+      id-token: write
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        with:
+          persist-credentials: false
+      - name: Install Rust
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        run: rustup update stable --no-self-update
+      - name: Establish provenance
+        id: auth
+        uses: rust-lang/crates-io-auth-action@b7e9a28eded4986ec6b1fa40eeee8f8f165559ec # v1.0.3
+      - name: Publish package
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
+        run: cargo publish

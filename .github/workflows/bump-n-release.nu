@@ -212,9 +212,6 @@ export def main [
 
     mv-rolling-tags $ver
 
-    print "Publishing crate"
-    run-cmd cargo publish
-
     print $"Deploying ($tag)"
     run-cmd gh release create $tag --notes-file $RELEASE_NOTES
 }
