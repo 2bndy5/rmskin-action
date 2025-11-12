@@ -34,8 +34,8 @@ clap = { version = "4.5.51", features = ["derive"], optional = true }
 colored = { version = "3.0.0", optional = true }
 image = { version = "0.25.8", default-features = false, features = ["bmp"] }
 log = "0.4.28"
-pyo3 = { version = "0.25.1", features = ["extension-module", "abi3-py39"], optional = true }
-pyo3-log = { version = "0.12.4", optional = true }
+pyo3 = { version = "0.27.1", features = ["extension-module", "abi3-py39"], optional = true }
+pyo3-log = { version = "0.13.2", optional = true }
 rust-ini = "0.21.3"
 tempfile = "3.23.0"
 thiserror = "2.0.17"
