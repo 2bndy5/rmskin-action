@@ -61,7 +61,7 @@ runs:
       shell: bash
       run: mkdir "${GITHUB_ACTION_PATH%/}/bin"
     - name: Install cargo-binstall
-      uses: cargo-bins/cargo-binstall@afcf9780305558bcc9e4bc94b7589ab2bb8b6106 # v1.15.9
+      uses: cargo-bins/cargo-binstall@3fc81674af4165a753833a94cae9f91d8849049f # v1.16.2
     - name: Install rmskin-builder binary
       shell: bash
       env:
