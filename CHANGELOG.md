@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 <!-- markdownlint-disable MD024 -->
 
+## [2.0.3] - 2025-12-31
+
+### <!-- 4 --> 🛠️ Fixed
+
+- Do not treat `\` as an escape char in RMSKIN.ini file by @2bndy5 in [#33](https://github.com/2bndy5/rmskin-action/pull/33)
+
+### <!-- 6 --> 📦 Dependency updates
+
+- Bump the actions group with 4 updates by @dependabot[bot] in [#30](https://github.com/2bndy5/rmskin-action/pull/30)
+- Bump the cargo group with 3 updates by @dependabot[bot] in [#31](https://github.com/2bndy5/rmskin-action/pull/31)
+- Bump the cargo group with 3 updates by @dependabot[bot] in [#34](https://github.com/2bndy5/rmskin-action/pull/34)
+
+[2.0.3]: https://github.com/2bndy5/rmskin-action/compare/v2.0.2...v2.0.3
+
+Full commit diff: [`v2.0.2...v2.0.3`][2.0.3]
+
 ## [2.0.2] - 2025-11-12
 
 ### <!-- 6 --> 📦 Dependency updates
@@ -15,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump the actions group with 6 updates by @dependabot[bot] in [#26](https://github.com/2bndy5/rmskin-action/pull/26)
 - Bump the cargo group with 2 updates by @dependabot[bot] in [#27](https://github.com/2bndy5/rmskin-action/pull/27)
 - Bump pyo3 and pyo3-log by @2bndy5 in [#29](https://github.com/2bndy5/rmskin-action/pull/29)
+- Bump version to v2.0.2 by @2bndy5 in [`8a88b10`](https://github.com/2bndy5/rmskin-action/commit/8a88b10c5b4ac8d0df015800eae8a12ee53c5fe2)
 
 ### <!-- 9 --> 🗨️ Changed
 

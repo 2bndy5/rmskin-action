@@ -1,7 +1,7 @@
 [package]
 name = "rmskin-builder"
 description = "A CLI tool to package Rainmeter Skins into a .rmskin file."
-version = "2.0.2"
+version = "2.0.3"
 edition = "2024"
 license = "MIT"
 repository = "https://github.com/2bndy5/rmskin-action"
