@@ -33,13 +33,13 @@ anyhow = { version = "1.0.100", optional = true }
 clap = { version = "4.5.53", features = ["derive"], optional = true }
 colored = { version = "3.0.0", optional = true }
 image = { version = "0.25.9", default-features = false, features = ["bmp"] }
-log = "0.4.28"
+log = "0.4.29"
 pyo3 = { version = "0.27.2", features = ["extension-module", "abi3-py39"], optional = true }
 pyo3-log = { version = "0.13.2", optional = true }
 rust-ini = "0.21.3"
-tempfile = "3.23.0"
+tempfile = "3.24.0"
 thiserror = "2.0.17"
-zip = { version = "6.0.0", default-features = false, features = ["deflate"] }
+zip = { version = "7.0.0", default-features = false, features = ["deflate"] }
 
 [dev-dependencies]
 
