@@ -137,12 +137,12 @@ impl CliArgs {
         if let Some(author) = &self.author {
             Ok(author.clone())
         } else if let Ok(actor) = env::var(GH_ACTOR) {
-            return Ok(actor);
+            Ok(actor)
         } else {
             let result = Command::new("git")
                 .args(["config", "get", "user.name"])
                 .output()?;
-            return Ok(String::from_utf8(result.stdout.trim_ascii().to_vec())?);
+            Ok(String::from_utf8(result.stdout.trim_ascii().to_vec())?)
         }
     }
 

@@ -1,7 +1,6 @@
-use std::{
-    path::{Path, PathBuf},
-    str::FromStr,
-};
+use std::path::Path;
+#[cfg(feature = "py-binding")]
+use std::path::PathBuf;
 
 use super::RMSKIN_INI_NAME;
 use crate::{CliArgs, IniError};
@@ -39,7 +38,7 @@ pub fn parse_rmskin_ini(
     path: &Path,
     build_dir: &Path,
 ) -> Result<(String, String), IniError> {
-    let mut rmskin_ini = Ini::load_from_file(path.to_path_buf().join(RMSKIN_INI_NAME))?;
+    let mut rmskin_ini = Ini::load_from_file_noescape(path.to_path_buf().join(RMSKIN_INI_NAME))?;
     let root = rmskin_ini
         .section_mut(Some(ROOT_SECTION_KEY))
         .ok_or(IniError::MissingSection(ROOT_SECTION_KEY.to_string()))?;
@@ -71,12 +70,12 @@ pub fn parse_rmskin_ini(
     root.insert(NAME_KEY, &arc_name);
     log::info!("Using Name '{arc_name}' and Version '{version}'");
 
-    let load_t = root.get(LOAD_TYPE_KEY).unwrap_or(DEFAULT_LOAD_TYPE);
     if let Some(on_load) = root.get(LOAD_KEY) {
-        let rel_path = PathBuf::from_str(&format!("{load_t}s"))
-            .unwrap() // PathBuf::from_str() is actually infallible, so use unwrap() here.
-            .join(on_load.escape_default().to_string().replace("\\", "/"));
-        let on_load_path = path.to_path_buf().join(&rel_path);
+        let load_t = root.get(LOAD_TYPE_KEY).unwrap_or(DEFAULT_LOAD_TYPE);
+        let on_load_path = path
+            .to_path_buf()
+            .join(format!("{load_t}s"))
+            .join(on_load.replace("\\", "/"));
         if let Err(err) = on_load_path.canonicalize() {
             log::error!("Failed to make absolute path to {on_load_path:?}");
             return Err(IniError::Io(err));
