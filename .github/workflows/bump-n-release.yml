@@ -38,7 +38,7 @@ jobs:
           persist-credentials: true
 
       - name: Setup nushell
-        uses: hustcer/setup-nu@920172d92eb04671776f3ba69d605d3b09351c30 # v3.20.0
+        uses: hustcer/setup-nu@920172d92eb04671776f3ba69d605d3b09351c30 # v3.22
         with:
           version: ${{ vars.NUSHELL_VERSION || '*' }}
 

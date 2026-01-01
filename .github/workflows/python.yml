@@ -158,7 +158,7 @@ jobs:
         with:
           enable-cache: false
       - name: Cache deps
-        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v4.3.0 # zizmor: ignore[cache-poisoning]
+        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1 # zizmor: ignore[cache-poisoning]
         with:
           path: ~/.cargo
           key: python-test-${{ hashFiles('Cargo.lock', 'uv.lock') }}
