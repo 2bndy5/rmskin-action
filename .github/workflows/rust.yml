@@ -37,7 +37,7 @@ jobs:
           # need git history for some tests about determining version
           fetch-depth: 0
       - name: Cache deps
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.1 # zizmor: ignore[cache-poisoning]
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3 # zizmor: ignore[cache-poisoning]
         with:
           path: ~/.cargo
           key: rust-test-${{ hashFiles('Cargo.lock') }}
@@ -178,7 +178,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Cache deps
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.1 # zizmor: ignore[cache-poisoning]
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3 # zizmor: ignore[cache-poisoning]
         with:
           path: ~/.cargo
           key: cargo-doc-${{ hashFiles('Cargo.lock') }}
