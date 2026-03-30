@@ -23,4 +23,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           FORCE_COLOR: 1
-        run: pipx run zizmor --format=github .github/workflows/*.yml
+        run: pipx run zizmor --format=github ./
