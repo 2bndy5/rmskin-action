@@ -56,6 +56,23 @@ jobs:
         run: nur test --profile ci
       - name: Generate coverage reports
         run: nur test lcov
+      - name: upload coverage info as artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: lcov-info
+          path: lcov.info
+          if-no-files-found: error
+  coverage:
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: test-coverage
+      url: https://app.codecov.io/gh/2bndy5/rmskin-action
+    steps:
+      - name: Download coverage info artifact
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
+        with:
+          name: lcov-info
       - uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

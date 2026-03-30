@@ -74,10 +74,16 @@ runs:
     - name: Run rmskin-builder
       shell: bash
       id: rmskin-builder
+      env:
+        INPUTS_VERSION: ${{ inputs.version }}
+        INPUTS_PATH: ${{ inputs.path }}
+        INPUTS_AUTHOR: ${{ inputs.author }}
+        INPUTS_TITLE: ${{ inputs.title }}
+        INPUTS_DIR_OUT: ${{ inputs.dir-out || inputs.dir_out }}
       run: >-
         ${GITHUB_ACTION_PATH%/}/bin/rmskin-build
-        --path "${{ inputs.path }}"
-        ${{ inputs.version && '--version ' || '' }}${{ inputs.version }}
-        --author "${{ inputs.author }}"
-        --title "${{ inputs.title }}"
-        --dir_out "${{ inputs.dir-out || inputs.dir_out }}"
+        --path "${INPUTS_PATH}"
+        ${{ env.INPUTS_VERSION && '--version ' || '' }}${INPUTS_VERSION}
+        --author "${INPUTS_AUTHOR}"
+        --title "${INPUTS_TITLE}"
+        --dir_out "${INPUTS_DIR_OUT}"
