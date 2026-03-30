@@ -43,13 +43,16 @@ pub enum CliError {
 ///
 /// A [cookiecutter repository](https://github.com/2bndy5/Rainmeter-Cookiecutter)
 /// has also been created to quickly facilitate development of Rainmeter skins on Github.
-#[cfg_attr(feature = "clap", derive(Parser, Debug, Default, Clone))]
-#[cfg_attr(not(feature = "clap"), derive(Debug, Default, Clone))]
+#[cfg_attr(feature = "clap", derive(Parser))]
+#[derive(Debug, Default, Clone)]
 #[cfg_attr(
     feature = "clap",
     command(name = "rmskin-builder", about, long_about, verbatim_doc_comment)
 )]
-#[cfg_attr(feature = "py-binding", pyclass(module = "rmskin_builder"))]
+#[cfg_attr(
+    feature = "py-binding",
+    pyclass(module = "rmskin_builder", from_py_object)
+)]
 pub struct CliArgs {
     /// The path pointing to the Rainmeter project.
     ///

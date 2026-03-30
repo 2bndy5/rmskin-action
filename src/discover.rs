@@ -13,7 +13,7 @@ use crate::file_utils::{RMSKIN_BMP_NAME, RMSKIN_INI_NAME};
 #[derive(Debug, Default, PartialEq, Eq, Clone, Copy)]
 #[cfg_attr(
     feature = "py-binding",
-    pyclass(get_all, set_all, module = "rmskin_builder", eq)
+    pyclass(get_all, set_all, module = "rmskin_builder", eq, from_py_object)
 )]
 pub struct HasComponents {
     pub rm_skin_ini: bool,
