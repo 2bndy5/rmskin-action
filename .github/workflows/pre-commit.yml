@@ -24,7 +24,7 @@ jobs:
         with:
           enable-cache: true
       - name: Cache pre-commit environments
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: '~/.cache/pre-commit'
           key: pre-commit-${{ steps.setup-uv.outputs.uv-version }}-${{ hashFiles('.pre-commit-config.yaml') }}
@@ -39,7 +39,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Cache deps
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: ~/.cargo
           key: cargo-lint-${{ hashFiles('Cargo.lock') }}
@@ -80,7 +80,7 @@ jobs:
           PR_TITLE: "${{ steps.get-title.outputs.title }}"
           COMMITTED_CONFIG: .config/committed.toml
         run: echo "${PR_TITLE}" | committed --config "${COMMITTED_CONFIG}" --commit-file -
-      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: latest
       - name: spell check

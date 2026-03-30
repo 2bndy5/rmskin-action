@@ -37,7 +37,7 @@ jobs:
           # need git history for some tests about determining version
           fetch-depth: 0
       - name: Cache deps
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3 # zizmor: ignore[cache-poisoning]
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4 # zizmor: ignore[cache-poisoning]
         with:
           path: ~/.cargo
           key: rust-test-${{ hashFiles('Cargo.lock') }}
@@ -70,7 +70,7 @@ jobs:
       url: https://app.codecov.io/gh/2bndy5/rmskin-action
     steps:
       - name: Download coverage info artifact
-        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: lcov-info
       - uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
@@ -195,7 +195,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Cache deps
-        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3 # zizmor: ignore[cache-poisoning]
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4 # zizmor: ignore[cache-poisoning]
         with:
           path: ~/.cargo
           key: cargo-doc-${{ hashFiles('Cargo.lock') }}
@@ -228,7 +228,7 @@ jobs:
         run: cargo package
 
       - name: Download built assets
-        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           pattern: ${{ env.BIN_NAME }}-*
           path: dist
@@ -265,7 +265,7 @@ jobs:
         run: rustup update stable --no-self-update
       - name: Establish provenance
         id: auth
-        uses: rust-lang/crates-io-auth-action@b7e9a28eded4986ec6b1fa40eeee8f8f165559ec # v1.0.3
+        uses: rust-lang/crates-io-auth-action@bbd81622f20ce9e2dd9622e3218b975523e45bbe # v1.0.4
       - name: Publish package
         env:
           CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
