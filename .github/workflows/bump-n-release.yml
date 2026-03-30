@@ -22,6 +22,8 @@ permissions: {}
 
 jobs:
   bump-release:
+    environment:
+      name: prep-deploy
     # permissions required for BUMP_N_RELEASE token:
     #   # for creating GitHub Release and pushing changes to metadata files
     #   contents: write
