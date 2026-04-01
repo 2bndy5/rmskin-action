@@ -52,7 +52,7 @@ jobs:
       # Run this rmskin-action
       - name: Run Build action
         id: builder
-        uses: 2bndy5/rmskin-action@v2.0.3
+        uses: 2bndy5/rmskin-action@v2.0.4
 
       # Upload the asset (using the output from the `builder` step)
       - name: Upload Release Asset
