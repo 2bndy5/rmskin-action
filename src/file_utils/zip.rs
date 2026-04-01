@@ -28,7 +28,7 @@ fn compress_file<W: Write + Seek>(
     let mut file_in = fs::File::open(src)?;
     let mut buf = vec![];
     file_in.read_to_end(&mut buf)?;
-    let _ = archive.write(&buf)?;
+    archive.write_all(&buf)?;
     Ok(())
 }
 
