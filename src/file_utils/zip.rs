@@ -26,9 +26,15 @@ fn compress_file<W: Write + Seek>(
             .compression_level(Some(9)),
     )?;
     let mut file_in = fs::File::open(src)?;
-    let mut buf = vec![];
-    file_in.read_to_end(&mut buf)?;
-    archive.write_all(&buf)?;
+    let mut buf = [0_u8; 1024];
+    loop {
+        let bytes_read = file_in.read(&mut buf)?;
+        if bytes_read == 0 {
+            break;
+        }
+        archive.write_all(&buf[..bytes_read])?;
+    }
+    archive.flush()?;
     Ok(())
 }
 
