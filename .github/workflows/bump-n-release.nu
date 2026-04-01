@@ -107,7 +107,7 @@ export def bump-version [
     $result | get new
 }
 
-export const RELEASE_NOTES = $nu.temp-path | path join "ReleaseNotes.md"
+export const RELEASE_NOTES = $nu.temp-dir | path join "ReleaseNotes.md"
 const CHANGELOG = "CHANGELOG.md"
 
 # Use `git-cliff` tp generate changes.
