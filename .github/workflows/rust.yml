@@ -37,14 +37,14 @@ jobs:
           # need git history for some tests about determining version
           fetch-depth: 0
       - name: Cache deps
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4 # zizmor: ignore[cache-poisoning]
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.4 # zizmor: ignore[cache-poisoning]
         with:
           path: ~/.cargo
           key: rust-test-${{ hashFiles('Cargo.lock') }}
       - name: Setup Rust
         run: rustup update --no-self-update
       - name: Install cargo-binstall
-        uses: cargo-bins/cargo-binstall@bc432b49369a3f25c8c8b19578a82060c18a5dd6 # v1.17.6
+        uses: cargo-bins/cargo-binstall@dc19f1e48450eefe5a29b8da6c6b00a87d730b37 # v1.18.1
       - name: Install cargo-llvm-cov and cargo-nextest
         run: cargo binstall -y cargo-nextest cargo-llvm-cov nur
         env:
@@ -57,7 +57,7 @@ jobs:
       - name: Generate coverage reports
         run: nur test lcov
       - name: upload coverage info as artifact
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: lcov-info
           path: lcov.info
@@ -77,7 +77,7 @@ jobs:
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: lcov-info
-      - uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+      - uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: lcov.info
@@ -150,7 +150,7 @@ jobs:
 
       - name: Install cargo-binstall
         if: matrix.cross
-        uses: cargo-bins/cargo-binstall@bc432b49369a3f25c8c8b19578a82060c18a5dd6 # v1.17.6
+        uses: cargo-bins/cargo-binstall@dc19f1e48450eefe5a29b8da6c6b00a87d730b37 # v1.18.1
       - name: Install cross (cargo cross compiler)
         if: matrix.cross
         env:
@@ -186,7 +186,7 @@ jobs:
           tar -a -c -v -f "${arc_name}" ${tgt} LICENSE
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ env.BIN_NAME }}-${{ matrix.target }}
           path: ${{ env.BIN_NAME }}-${{ matrix.target }}*
@@ -199,7 +199,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Cache deps
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4 # zizmor: ignore[cache-poisoning]
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.4 # zizmor: ignore[cache-poisoning]
         with:
           path: ~/.cargo
           key: cargo-doc-${{ hashFiles('Cargo.lock') }}
@@ -208,7 +208,7 @@ jobs:
       - name: Build API docs
         run: cargo doc --no-deps --lib
       - name: Upload artifacts
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: api-docs
           path: target/doc/rmskin_builder
