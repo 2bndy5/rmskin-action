@@ -19,12 +19,12 @@ jobs:
         with:
           persist-credentials: false
       - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@5a095e7a2014a4212f075830d4f7277575a9d098 # v7.3.1
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
         id: setup-uv
         with:
           enable-cache: true
       - name: Cache pre-commit environments
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: '~/.cache/pre-commit'
           key: pre-commit-${{ steps.setup-uv.outputs.uv-version }}-${{ hashFiles('.pre-commit-config.yaml') }}
@@ -39,7 +39,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Cache deps
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ~/.cargo
           key: cargo-lint-${{ hashFiles('Cargo.lock') }}
@@ -61,7 +61,7 @@ jobs:
           persist-credentials: false
       - run: rustup update --no-self-update
       - name: Install cargo-binstall
-        uses: cargo-bins/cargo-binstall@bc432b49369a3f25c8c8b19578a82060c18a5dd6 # v1.17.6
+        uses: cargo-bins/cargo-binstall@dc19f1e48450eefe5a29b8da6c6b00a87d730b37 # v1.18.1
       - name: Install committed
         run: cargo binstall -y committed
         env:
@@ -80,7 +80,7 @@ jobs:
           PR_TITLE: "${{ steps.get-title.outputs.title }}"
           COMMITTED_CONFIG: .config/committed.toml
         run: echo "${PR_TITLE}" | committed --config "${COMMITTED_CONFIG}" --commit-file -
-      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: latest
       - name: spell check
