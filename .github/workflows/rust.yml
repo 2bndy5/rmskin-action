@@ -44,7 +44,7 @@ jobs:
       - name: Setup Rust
         run: rustup update --no-self-update
       - name: Install cargo-binstall
-        uses: cargo-bins/cargo-binstall@e00d2c94cc0067b77737821097a62d91c0301baa # v1.21.1
+        uses: cargo-bins/cargo-binstall@75b4bfae1b2c753a6806bbce6e6cb89b602de33c # v1.22.0
       - name: Install cargo-llvm-cov and cargo-nextest
         run: cargo binstall -y cargo-nextest cargo-llvm-cov nur
         env:
@@ -150,7 +150,7 @@ jobs:
 
       - name: Install cargo-binstall
         if: matrix.cross
-        uses: cargo-bins/cargo-binstall@e00d2c94cc0067b77737821097a62d91c0301baa # v1.21.1
+        uses: cargo-bins/cargo-binstall@75b4bfae1b2c753a6806bbce6e6cb89b602de33c # v1.22.0
       - name: Install cross (cargo cross compiler)
         if: matrix.cross
         env:
