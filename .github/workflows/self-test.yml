@@ -31,7 +31,7 @@ jobs:
       # Runs a this repo's action
       - name: Run Build action
         id: builder
-        uses: ./
+        uses: $/
         with:
           path: tests/demo_project
         env:
