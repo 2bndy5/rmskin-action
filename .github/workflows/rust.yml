@@ -44,7 +44,7 @@ jobs:
       - name: Setup Rust
         run: rustup update --no-self-update
       - name: Install cargo-binstall
-        uses: cargo-bins/cargo-binstall@75b4bfae1b2c753a6806bbce6e6cb89b602de33c # v1.22.0
+        uses: cargo-bins/cargo-binstall@b874e25ea559687bec77e281e9b271aa1367b624 # v1.23.0
       - name: Install cargo-llvm-cov and cargo-nextest
         run: cargo binstall -y cargo-nextest cargo-llvm-cov nur
         env:
@@ -77,7 +77,7 @@ jobs:
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: lcov-info
-      - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+      - uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: lcov.info
@@ -150,7 +150,7 @@ jobs:
 
       - name: Install cargo-binstall
         if: matrix.cross
-        uses: cargo-bins/cargo-binstall@75b4bfae1b2c753a6806bbce6e6cb89b602de33c # v1.22.0
+        uses: cargo-bins/cargo-binstall@b874e25ea559687bec77e281e9b271aa1367b624 # v1.23.0
       - name: Install cross (cargo cross compiler)
         if: matrix.cross
         env:
