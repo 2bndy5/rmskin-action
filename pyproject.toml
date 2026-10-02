@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "rmskin-builder"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 description = "A script that will attempt to assemble a validating Rainmeter skin package for quick and easy distribution on Github."
 readme = "README.md"
 keywords = ["rainmeter", "rainmeter-skin", "packaging"]
