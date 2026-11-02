@@ -103,7 +103,6 @@ jobs:
           python-version: ${{ matrix.python.version }}
           architecture: ${{ matrix.platform.py-arch || null }}
           # remove when python 3.15 goes stable
-          allow-prereleases: ${{ startsWith(matrix.python.version, '3.15') }}
       - name: Build wheels
         uses: PyO3/maturin-action@e83996d129638aa358a18fbd1dfb82f0b0fb5d3b # v1.51.0
         with:
@@ -113,6 +112,7 @@ jobs:
             --out dist
             --interpreter ${{ matrix.python.version }}
             --features ${{ matrix.python.feature }}
+            ${{ runner.os == 'Linux' && matrix.platform.target != 'ppc64le' && '--zig' || '' }}
           # zizmor: ignore[cache-poisoning]
           sccache: ${{ startsWith(github.ref, 'refs/tags') && 'false' || 'true' }}
           manylinux: ${{ matrix.platform.manylinux || 'auto' }}
